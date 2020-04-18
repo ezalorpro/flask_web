@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pagina boleta</title>
+
+
+  {% block cssContent %}
+  {% endblock cssContent %}
+
+</head>
+
+<body>
+  <main>
+    <div class="row content_margin">
+      <div class="container">
+        <div class="col s12 m12 l12">
+          {% block content %}
+          {% endblock content %}
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  {% block scriptsContent %}
+  {% endblock scriptsContent %}
+
+</body>
+
+</html>
