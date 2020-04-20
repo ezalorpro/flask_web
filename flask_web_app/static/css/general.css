@@ -1,0 +1,230 @@
+/* change colour of filled in check box */
+.checkbox-blue-grey[type="checkbox"].filled-in:checked+span:not(.lever):after {
+  border: 2px solid #0091ea;
+  background-color: #0091ea;
+}
+
+/*
+ * Configure the z-index of the editor UI, so when inside a Materialize
+ * modal, it will be rendered over the modal.
+ */
+:root {
+  --ck-z-default: 100;
+  --ck-z-modal: calc(var(--ck-z-default) + 999);
+}
+
+/*
+ * Bring back the default CKEditor 5 input appearance by overriding
+ * high–specificity styles brought by materialize.css.
+ *
+ * See: https://github.com/Dogfalo/materialize/blob/v1-dev/sass/components/forms/_input-fields.scss#L10-L40
+ */
+.ck input.ck-input.ck-input-text {
+  box-shadow: var(--ck-inner-shadow), 0 0;
+  background: var(--ck-color-input-background);
+  border: 1px solid var(--ck-color-input-border);
+  padding: var(--ck-spacing-extra-tiny) var(--ck-spacing-medium);
+  transition-property: box-shadow, border;
+  transition: .2s ease-in-out;
+
+  height: inherit;
+  width: inherit;
+  font-size: inherit;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.ck input.ck-input.ck-input-text:focus {
+  border: var(--ck-focus-ring);
+  box-shadow: var(--ck-focus-outer-shadow), var(--ck-inner-shadow);
+}
+
+/*
+ * Bring back the default <ul> and <li> appearance.
+ *
+ * See: https://github.com/Dogfalo/materialize/blob/v1-dev/sass/components/_global.scss#L28-L37
+ */
+.ck.ck-content ul,
+.ck.ck-content ul li {
+  list-style-type: inherit;
+}
+
+.ck.ck-content ul {
+  /* Default user agent stylesheet, you can change it to your needs. */
+  padding-left: 40px;
+}
+
+
+@media only screen and (min-width : 992px) {
+  .invesible-top {
+    top: 65px;
+  }
+
+  .content_margin {
+    padding-left: 200px;
+  }
+}
+
+@media only screen and (max-width : 992px) {
+  .content_margin {
+    padding-left: 0px;
+  }
+}
+
+
+.sidenav {
+  width: 200px !important;
+}
+
+.sidenav .collapsible-body li a,
+.sidenav.fixed .collapsible-body li a {
+  padding: 0 37.5px 0 45px;
+}
+
+.sidenav .collapsible-header,
+.sidenav.fixed .collapsible-header {
+  padding: 0 32px;
+}
+
+/* separacion iconos particular */
+.icon-separation {
+  margin-left: 3px;
+}
+
+/* separacion iconos particular */
+.icon-separation2 {
+  margin-right: 0px;
+  margin-left: 8px;
+}
+
+span.valido {
+  color: #0091ea !important;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+span.invalido {
+  color: #e53935 !important;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.input-field ul li span.invalido {
+  display: none;
+  position: static;
+  color: #e53935 !important;
+  padding: 15px;
+  margin-top: 0px;
+  margin-left: 45px;
+  border: solid #e53935 1px;
+  border-radius: 3px;
+}
+
+.col ul.invalido {
+  display: none;
+  position: static;
+  color: #e53935 !important;
+  padding: 15px;
+  margin-top: 0px;
+  margin-left: 45px;
+  border: solid #e53935 1px;
+  border-radius: 3px;
+}
+
+ul.valido {
+  display: block;
+  position: static;
+  padding: 15px;
+  margin-top: 10px;
+  border: solid #0090ea80 1px;
+  border-radius: 3px;
+}
+
+.background_simple {
+  background-color: #0090ea23;
+}
+
+ul.valido li {
+  float: none;
+  vertical-align: middle;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+ul.sidebar li {
+  float: none;
+  vertical-align: middle;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+ul.sidebar li a {
+  color: #0a0d1a;
+  float: none;
+  vertical-align: middle;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* indicador del carousel color */
+.carousel .indicators .indicator-item {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* indicador activo del carousel color */
+.carousel .indicators .indicator-item.active {
+  background-color: black;
+}
+
+/* label color */
+.input-field label {
+  pointer-events: all !important;
+  color: #000;
+}
+
+/* label focus color */
+.input-field input:focus+label {
+  color: #0091ea !important;
+}
+
+/* label underline focus color */
+.input-field input:focus {
+  border-bottom: 1px solid #0091ea !important;
+  box-shadow: 0 1px 0 0 #0091ea !important;
+}
+
+/* label focus color */
+.input-field textarea:focus+label {
+  color: #0091ea !important;
+}
+
+/* label underline focus color */
+.input-field textarea:focus {
+  border-bottom: 1px solid #0091ea !important;
+  box-shadow: 0 1px 0 0 #0091ea !important;
+}
+
+/* valid color */
+.input-field input.valid {
+  border-bottom: 1px solid #0091ea !important;
+  box-shadow: 0 1px 0 0 #0091ea !important;
+}
+
+/* invalid color */
+.input-field input.invalid {
+  border-bottom: 1px solid #e53935 !important;
+  box-shadow: 0 1px 0 0 #e53935 !important;
+}
+
+/* icon prefix focus color */
+.input-field .prefix.active {
+  color: #1976d2;
+}
+
+.material-icons {
+  vertical-align: -5px !important;
+}
+
+.dropdown-content.select-dropdown li:not(.disabled) span {
+  color: #1976d2;
+}
