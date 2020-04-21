@@ -103,10 +103,6 @@ def ploting():
         p.line(x_data, y_data)
 
         script_bok, div_bok = components(p)
-        response = {
-            'script_bok': script_bok,
-            'div_bok': div_bok
-        }
         return script_bok + div_bok
     else:
         form = PlotingForm()
