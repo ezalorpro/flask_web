@@ -1,0 +1,69 @@
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/materialicons.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/materialize.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/general.css') }}">
+
+
+  <div class="container">
+      <div class="row">
+          <div class="card-panel hoverable col s12 m10 l6 offset-m1 offset-l3">
+              <form action="{{ url_for('login.admin_login') }}" method="POST" class="col s12">
+                  <input type="hidden" name="next" value="{{ request.args.get('next', '') }}" />
+
+                  <div class="col s12 center" style="margin-bottom: 10px;">
+                      <h5> Ingresar </h5>
+                  </div>
+
+                  {{ form.csrf_token }}
+                  <div class="input-field col s12">
+                      <i class="material-icons prefix">perm_identity</i>
+                      {{ form.username.label(class="active") }}
+                      {{ form.username }}
+                      {% if form.username.errors %}
+                      <ul>
+                          {% for error in form.username.errors %}
+                          <li><span class="red-text text-darken-1">{{ error }}</span></li>
+                          {% endfor %}
+                      </ul>
+                      {% endif %}
+                  </div>
+                  <div class="input-field col s12">
+                      <i class="material-icons prefix">lock_open</i>
+                      {{ form.password.label(class="active") }}
+                      {{ form.password }}
+                      {% if form.password.errors %}
+                      <ul>
+                          {% for error in form.password.errors %}
+                          <li><span class="red-text text-darken-1"><i class="material-icons left">cancel</i>
+                                  {{ error }}</span></li>
+                          {% endfor %}
+                      </ul>
+                      {% endif %}
+
+                      {% with messages = get_flashed_messages() %}
+                      {% if messages %}
+                      <ul>
+                          {% for error in messages %}
+                          <li><span class="red-text text-darken-1"><i class="material-icons left">cancel</i>
+                                  {{ error }}</span></li>
+                          {% endfor %}
+                      </ul>
+                      {% endif %}
+                      {% endwith %}
+                  </div>
+
+                  <div class="col s12 right-align" style="margin-bottom: 20px">
+                      <label>
+                          {{ form.recordar(class="filled-in checkbox-blue-grey") }}
+                          <span>recordarme?</span>
+                      </label>
+                  </div>
+
+                  <div class="col s12 right-align" style="margin-bottom: 20px">
+                      <button type="submit" class="btn waves-effect waves-light light-blue accent-4">Acceder<i
+                              class="material-icons right">check</i></button>
+                  </div>
+
+              </form>
+          </div>
+      </div>
+  </div>

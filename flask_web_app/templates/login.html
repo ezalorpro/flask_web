@@ -1,15 +1,11 @@
 {% extends 'base.html' %}
 
-{% block cssContent %}
-{% endblock cssContent %}
-
 {% block content %}
 
 <div class="row">
     <div class="card-panel hoverable col s12 m10 l6 offset-m1 offset-l3">
         <form action="{{ url_for('login') }}" method="POST" class="col s12">
-            {# <input type="hidden" name="next"
-                value="{% if request.POST.next %}{{ request.POST.next }}{% else %}{{ request.GET.next }}{% endif %}" /> #}
+            <input type="hidden" name="next" value="{{ request.args.get('next', '') }}" />
 
             <div class="col s12 center" style="margin-bottom: 10px;">
                 <h5> Ingresar </h5>

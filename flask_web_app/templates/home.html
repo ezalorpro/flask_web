@@ -19,7 +19,7 @@
             <div class="carousel-item" href="#three!">
                 <h2>Tercer Panel</h2>
                 {% if current_user.is_authenticated %}
-                <a href=""
+                <a href="{{ url_for('ploting') }}"
                     class="btn waves-effect waves-light light-blue accent-4">ploting</a>
                 {% else %}
                 <a href="{{ url_for('login') }}"

@@ -1,19 +1,31 @@
 $(document).ready(function () {
     
-    // Plot de data con Ajax
     $('#formaPlots').submit(function (e) {
         e.preventDefault()
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token)
+                }
+            }
+        });
         $.ajax({
             url: url_resultsplot,
-            type: 'post',
+            type: 'POST',
             data: {
-                'csrfmiddlewaretoken': csrftoken,
                 'x_points': $("#x_points").val(),
                 'y_points': $("#y_points").val()
             },
             success: function (data) {
+                console.log(data);
                 $('#plot-content').html(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
             }
+
         });
     });
 

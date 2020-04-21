@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block cssContent %}
+{% endblock cssContent %}
+
+{% block content %}
+<div class="card-panel hoverable">
+    <div class="row">
+        <div class="col s12 m12 l6">
+            <form id="formaPlots">
+                {{ form.csrf_token }}
+                <h5 style="margin-bottom: 40px;" class="center"> Ingrese los vectores para (X, Y)</h5>
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">border_horizontal</i>
+                    {{ form.x_points.label }}
+                    {{ form.x_points }}
+                </div>
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">border_vertical</i>
+                    {{ form.y_points.label }}
+                    {{ form.y_points }}
+                </div>
+                <div class="col s12 right-align">
+                    <button id="graficar" type="submit" class="btn waves-effect waves-light light-blue accent-4 "
+                        style="margin-bottom: 20px">Enviar<i class="material-icons right">done</i></button>
+                </div>
+            </form>
+        </div>
+
+        <div id="plot-content" class="col s12 m12 l6">
+            {% autoescape off %}
+            {{div_bok}}
+            {{script_bok}}
+            {% endautoescape %}
+        </div>
+
+    </div>
+</div>
+{% endblock content %}
+
+{% block scriptsContent %}
+<script type="text/javascript">
+    var url_resultsplot = "{{ url_for('ploting') }}"
+    var csrf_token = "{{ csrf_token() }}";
+</script>
+
+<script src="{{ url_for('static', filename='js/bokeh-2.0.0.min.js') }}" type="text/javascript">
+</script>
+<script src="{{ url_for('static', filename='js/bokeh-widgets-2.0.0.min.js') }}" type="text/javascript">
+</script>
+<script src="{{ url_for('static', filename='js/scriptsTag.js') }}" type="text/javascript">
+</script>
+
+{% endblock scriptsContent %}

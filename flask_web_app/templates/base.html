@@ -31,17 +31,17 @@
           </ul>
           {% endif %}
           <div class="nav-wrapper light-blue accent-4">
-            <a href="" class="brand-logo">Intento de pagina</a>
+            <a href="/" class="brand-logo">Intento de pagina</a>
             <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             {% if current_user.is_anonymous %}
             <ul class="right hide-on-med-and-down">
-              <li><a href="">Ploting</a></li>
+              <li><a href="{{ url_for('ploting') }}">Ploting</a></li>
               <li><a href="{{ url_for('registrar') }}">registrarse</a></li>
               <li><a href="{{ url_for('login') }}">login</a></li>
             </ul> 
             {% else %}
             <ul class="right hide-on-med-and-down">
-              <li><a href="">Ploting</a></li>
+              <li><a href="{{ url_for('ploting') }}">Ploting</a></li>
               <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">{{current_user.username}}</a></li>
             </ul>
             {% endif %}
@@ -51,13 +51,13 @@
 
       {% if current_user.is_anonymous %}
       <ul class="sidenav sidenav-fixed invesible-top col l1" id="mobile-demo">
-        <li><a href="">Ploting</a></li>
+        <li><a href="{{ url_for('ploting') }}">Ploting</a></li>
         <li><a href="{{ url_for('registrar') }}">registrarse</a></li>
         <li><a href="{{ url_for('login') }}">login</a></li>
       </ul>
       {% else %}
       <ul class="sidenav sidenav-fixed invesible-top" id="mobile-demo">
-        <li><a href="" style="color: #0a0d1a;">Ploting</a></li>
+        <li><a href="{{ url_for('ploting') }}" style="color: #0a0d1a;">Ploting</a></li>
         <li><a href="">Mis post</a></li>
         <li>
           <ul class="collapsible collapsible-accordion">

@@ -3,6 +3,23 @@ from flask_web_app.models import User
 import wtforms
 from wtforms import validators, ValidationError
 
+
+class PlotingForm(FlaskForm):
+    x_points = wtforms.StringField(
+        label='Puntos de X',
+        validators=[
+            validators.DataRequired()
+        ]
+    )
+    
+    y_points = wtforms.StringField(
+        label='Puntos de Y',
+        validators=[
+            validators.DataRequired()
+        ]
+    )
+    
+    
 class LoginForm(FlaskForm):
     username = wtforms.StringField(
         label='Usuario',
