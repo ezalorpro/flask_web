@@ -1,3 +1,4 @@
 from flask_web_app import app
 
-app.run()
+if __name__ == "__main__":
+    app.run()

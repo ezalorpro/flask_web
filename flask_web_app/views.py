@@ -2,19 +2,17 @@ import json
 import re
 
 import wtforms
+from bokeh import plotting as plt
+from bokeh.embed import components
 from flask import jsonify, redirect, render_template, request, url_for
 from flask_admin.contrib.sqla import ModelView
-from flask_login import (current_user, login_required, login_url, login_user,
-                         logout_user)
+from flask_login import (current_user, login_required, login_url, login_user, logout_user)
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
-from bokeh import plotting as plt
-from bokeh.embed import components
 from flask_web_app import admin, app, db, login_manager
 from flask_web_app.forms import LoginForm, PlotingForm, RegistrationForm
 from flask_web_app.models import User
-
 
 EMAIL_REGX = r'[^@]+@[^@]+\.[^@]+'
 
@@ -112,9 +110,5 @@ def ploting():
         p = plt.figure(sizing_mode='scale_width')
         p.line(x_data, y_data)
         script_bok, div_bok = components(p)
-        context={
-            'form': form,
-            'div_bok': div_bok,
-            'script_bok': script_bok
-        }
+        context = {'form': form, 'div_bok': div_bok, 'script_bok': script_bok}
         return render_template('ploting.html', **context)

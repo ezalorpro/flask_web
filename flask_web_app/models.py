@@ -1,9 +1,12 @@
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
-from hashlib import md5
-from flask_web_app import db
-from flask_web_app import login_manager
+import datetime
 import enum
+from hashlib import md5
+
+from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from flask_web_app import db, login_manager
+
 
 class GenderderEnum(enum.Enum):
     hombre = 'Hombre'
@@ -30,6 +33,27 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f'<Usuario {self.username}>'
+
+
+class PostModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    title = db.Column(db.String, index=True, nullable=False)
+    post_text = db.Column(db.Text, index=True)
+    post_date = db.Column(
+        db.DateTime,
+        index=True,
+        nullable=False,
+        default=datetime.datetime.utcnow
+    )
+    post_modified = db.Column(
+        db.DateTime,
+        index=True,
+        nullable=False,
+        default=datetime.datetime.utcnow,
+        onupdate=datetime.datetime.utcnow
+    )
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref=db.backref('postmodel', lazy='dynamic'))
 
 
 @login_manager.user_loader
