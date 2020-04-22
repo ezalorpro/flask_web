@@ -24,8 +24,8 @@
         <nav>
           {% if current_user.is_authenticated %}
           <ul id="dropdown1" class="dropdown-content">
-            <li><a href="" class="light-blue-text text-accent-4">Mis post</a></li>
-            <li><a href="" class="light-blue-text text-accent-4">Perfil</a></li>
+            <li><a href="{{ url_for('list_posts') }}" class="light-blue-text text-accent-4">Mis post</a></li>
+            <li><a href="{{ url_for('profile') }}" class="light-blue-text text-accent-4">Perfil</a></li>
             <li class="divider"></li>
             <li><a href="{{ url_for('logout') }}" class="light-blue-text text-accent-4">Cerrar session</a></li>
           </ul>
@@ -58,7 +58,7 @@
       {% else %}
       <ul class="sidenav sidenav-fixed invesible-top" id="mobile-demo">
         <li><a href="{{ url_for('ploting') }}" style="color: #0a0d1a;">Ploting</a></li>
-        <li><a href="">Mis post</a></li>
+        <li><a href="{{ url_for('list_posts') }}">Mis post</a></li>
         <li>
           <ul class="collapsible collapsible-accordion">
             <li>
@@ -66,7 +66,7 @@
               <div class="collapsible-body">
                 <ul>
                   <li>
-                    <a href="">Ver perfil</a>
+                    <a href="{{ url_for('profile') }}">Ver perfil</a>
                   </li>
                   <li>
                     <a href="">Editar perfil</a>

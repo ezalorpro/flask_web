@@ -12,7 +12,7 @@ $(document).ready(function () {
     $('select').not('.disabled').formSelect();
 
     //  Para actualizar la imagen seleccionada en el avatar del perfil
-    $("#id_avatar").change(function () {
+    $("#avatar_file").change(function () {
         readURL(this);
     });
 

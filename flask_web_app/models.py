@@ -9,8 +9,8 @@ from flask_web_app import db, login_manager
 
 
 class GenderderEnum(enum.Enum):
-    hombre = 'Hombre'
-    mujer = 'Mujer'
+    hombre = "Hombre"
+    mujer = "Mujer"
 
 
 class User(db.Model, UserMixin):
@@ -20,6 +20,7 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String, index=True)
     email = db.Column(db.String, index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
+    avatar = db.Column(db.String, index=True)
     location = db.Column(db.String, index=True)
     gender = db.Column(db.Enum(GenderderEnum), index=True)
     information = db.Column(db.String, index=True)
@@ -32,12 +33,12 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return f'<Usuario {self.username}>'
+        return f"<Usuario: {self.username}>"
 
 
 class PostModel(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    title = db.Column(db.String, index=True, nullable=False)
+    title = db.Column(db.String, index=True, nullable=False, unique=True)
     post_text = db.Column(db.Text, index=True)
     post_date = db.Column(
         db.DateTime,
@@ -50,10 +51,15 @@ class PostModel(db.Model):
         index=True,
         nullable=False,
         default=datetime.datetime.utcnow,
-        onupdate=datetime.datetime.utcnow
+        onupdate=datetime.datetime.utcnow,
     )
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref=db.backref('postmodel', lazy='dynamic'))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
+    user = db.relationship(
+        "User",
+        backref=db.backref("postmodel",
+                           lazy="dynamic",
+                           passive_deletes=True)
+    )
 
 
 @login_manager.user_loader
