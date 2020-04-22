@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
 from flask_wtf import file
 from flask_web_app.models import User
+from flask_web_app.utils import EmailUniqueness
 from flask_web_app import photos
+
 import wtforms
 from wtforms import validators, ValidationError
 from flask_admin import form
@@ -73,21 +75,32 @@ class RegistrationForm(FlaskForm):
         validators=[validators.DataRequired()]
     )
 
+
 class EditProfileForm(FlaskForm):
 
     first_name = wtforms.StringField(label='Nombre')
     last_name = wtforms.StringField(label='Apellido')
     email = wtforms.StringField(
         label='correo electronico',
-        validators=[validators.email('Email no valido')]
+        validators=[
+            validators.email('Correo no valido'),
+            EmailUniqueness("Correo electronico ya registrado, ingrese otro")
+        ]
     )
     location = wtforms.StringField(label='location')
-    gender = wtforms.SelectField(label='Genero', choices=[('hombre', "Hombre"), ('mujer', "Mujer")])
+    gender = wtforms.SelectField(
+        label='Genero',
+        choices=[("nulo",
+                  "--"),
+                 ('hombre',
+                  "Hombre"),
+                 ('mujer',
+                  "Mujer")],
+    )
     information = wtforms.TextAreaField(label='Informacion')
     avatar_file = file.FileField(
         validators=[
             file.FileAllowed(photos,
-                             'Image only!'),
-            file.FileRequired('File was empty!')
+                             'Archivo no valido, debe ser una imagen valida')
         ]
     )

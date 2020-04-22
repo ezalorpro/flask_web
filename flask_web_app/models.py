@@ -9,6 +9,7 @@ from flask_web_app import db, login_manager
 
 
 class GenderderEnum(enum.Enum):
+    nulo = "--"
     hombre = "Hombre"
     mujer = "Mujer"
 

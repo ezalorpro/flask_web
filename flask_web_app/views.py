@@ -1,7 +1,9 @@
 import json
 import re
+import os
 
 import wtforms
+from PIL import Image, ImageOps
 from bokeh import plotting as plt
 from bokeh.embed import components
 from flask import jsonify, redirect, render_template, request, url_for
@@ -10,7 +12,7 @@ from flask_login import current_user, login_required, login_url, login_user, log
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
-from flask_web_app import admin, app, db, login_manager, photos
+from flask_web_app import admin, app, db, login_manager, photos, file_path
 from flask_web_app.forms import LoginForm, PlotingForm, RegistrationForm, EditProfileForm
 from flask_web_app.models import User, PostModel
 
@@ -138,16 +140,47 @@ def profile():
     post_list = [item for item in post_object]
     return render_template('profile.html', usuario=usuario, post_list=post_list)
 
+
 @app.route("/edit_profile", methods=["GET", "POST"])
 @login_required
 def edit_profile():
     perfilForm = EditProfileForm(obj=current_user)
     if request.method == 'POST' and perfilForm.validate_on_submit():
-        fileUrl = current_user.username + request.files['avatar_file'].filename
-        filename = photos.save(perfilForm.avatar_file.data)
+        if request.files['avatar_file']:
+            profile_image_handler(
+                current_user,
+                perfilForm,
+                request.files['avatar_file'].filename
+            )
         perfilForm.populate_obj(current_user)
-        current_user.avatar = fileUrl
         db.session.commit()
-        return redirect('plots:profile')
+        return redirect(url_for("profile"))
     else:
-        return render_template('edit_profile.html', perfilForm=perfilForm, usuario=current_user)
+        return render_template(
+            'edit_profile.html',
+            perfilForm=perfilForm,
+            usuario=current_user
+        )
+
+
+def profile_image_handler(user, form, filename):
+    if user.avatar:
+        try:
+            os.remove(file_path + '/' + user.avatar)
+            thumb_split = user.avatar.split('.')
+            thumb_old = thumb_split[0] + '_thumb.' + thumb_split[1]
+            os.remove(file_path + '/' + thumb_old)
+        except:
+            pass
+
+    fileUrl = user.username + '-' + filename
+    photos.save(form.avatar_file.data, name=fileUrl)
+    thumb = Image.open(file_path + '/' + fileUrl)
+    thumb = ImageOps.fit(thumb.copy(), (50, 50), Image.ANTIALIAS)
+    thumb_name = filename.split('.')
+    with open(
+        file_path + '/' + user.username + '-' + thumb_name[0] + '_thumb.' + thumb_name[1],
+        'wb'
+    ) as fp:
+        thumb.save(fp)
+    user.avatar = fileUrl

@@ -14,7 +14,7 @@
                     <div class="col s12 m12 l5 center-align">
                         <div class="col s12 center-align">
                             {% if usuario.avatar %}
-                            <img id="imgEdit" src="{{ url_for('static', filename='imagenes/' + usuario.avatar) }}"
+                            <img id="imgEdit" src="{{ url_for('static', filename='images/' + usuario.avatar) }}"
                                 class="circle responsive-img" style="height:150px; width: 150px;" />
                             {% else %}
                             <img id="imgEdit" src="{{ url_for('static', filename='images/default.png') }}"
@@ -88,8 +88,7 @@
                             {{ error }}</p>
                         {% endfor %}
                         {% endif %}
-
-
+                        
                         <div class="row right-align">
                             <div class="col s12" style="margin-bottom: -35px;">
                                 <a href="{{ url_for('profile') }}"
