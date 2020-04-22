@@ -42,10 +42,7 @@ class PostModel(db.Model):
     title = db.Column(db.String, index=True, nullable=False, unique=True)
     post_text = db.Column(db.Text, index=True)
     post_date = db.Column(
-        db.DateTime,
-        index=True,
-        nullable=False,
-        default=datetime.datetime.utcnow
+        db.DateTime, index=True, nullable=False, default=datetime.datetime.utcnow
     )
     post_modified = db.Column(
         db.DateTime,
@@ -56,10 +53,7 @@ class PostModel(db.Model):
     )
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
     user = db.relationship(
-        "User",
-        backref=db.backref("postmodel",
-                           lazy="dynamic",
-                           passive_deletes=True)
+        "User", backref=db.backref("postmodel", lazy="dynamic", passive_deletes=True)
     )
 
 
