@@ -156,6 +156,7 @@ def edit_profile():
         db.session.commit()
         return redirect(url_for("profile"))
     else:
+        perfilForm.gender.data = perfilForm.gender.data.split('.')[1]
         return render_template(
             'edit_profile.html',
             perfilForm=perfilForm,
