@@ -7,18 +7,15 @@ from bokeh import plotting as plt
 from bokeh.embed import components
 from flask import jsonify, redirect, render_template, request, url_for
 from flask_admin.contrib.sqla import ModelView
-from flask_login import current_user, login_required, login_url, login_user, logout_user
+from flask_login import (current_user, login_required, login_url, login_user,
+                         logout_user)
 from PIL import Image, ImageOps
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
 from flask_web_app import admin, app, db, file_path, login_manager, photos
-from flask_web_app.forms import (
-    EditProfileForm,
-    LoginForm,
-    PlotingForm,
-    RegistrationForm,
-)
+from flask_web_app.forms import (EditProfileForm, LoginForm, PlotingForm,
+                                 RegistrationForm)
 from flask_web_app.models import PostModel, User
 
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
@@ -48,7 +45,7 @@ def login():
     form = LoginForm()
     if request.method == "POST":
         if form.validate_on_submit():
-            user = User.query.filter(User.username == form.username.data).first()
+            user = User.query.filter_by(username=form.username.data).first()
             login_user(user, remember=form.recordar.data)
             if request.form.get("next"):
                 return redirect(request.form.get("next"))
@@ -73,7 +70,7 @@ def registrar():
     elif data:
         if data["tipo"] == "username":
             data = {
-                "flag": bool(User.query.filter(User.username == data["name"]).first())
+                "flag": bool(User.query.filter_by(username=data["name"]).first())
             }
         elif data["tipo"] == "email":
             if not bool(re.match(EMAIL_REGX, data["email"])):
@@ -81,7 +78,7 @@ def registrar():
                     "flag": False,
                     "info": "Ingrese una dirección de correo electrónico válida.",
                 }
-            elif bool(User.query.filter(User.email == data["email"]).first()):
+            elif bool(User.query.filter_by(email=data["email"]).first()):
                 data = {
                     "flag": False,
                     "info": "Correo electronico ya registrado, ingrese otro",
@@ -124,7 +121,7 @@ def ploting():
 @app.route("/posts")
 @login_required
 def list_posts():
-    post_object = PostModel.query.filter(PostModel.user == current_user).all()
+    post_object = PostModel.query.filter_by(user=current_user).all()
     post_list = [item for item in post_object]
     return render_template("list_posts.html", post_list=post_list)
 
@@ -132,7 +129,7 @@ def list_posts():
 @app.route("/posts/<post_id>")
 @login_required
 def post_view(post_id):
-    post = PostModel.query.filter(PostModel.id == post_id).first()
+    post = PostModel.query.get(post_id)
     print(post.user)
     return render_template("post_template.html", post=post)
 
@@ -141,7 +138,7 @@ def post_view(post_id):
 @login_required
 def profile():
     usuario = current_user
-    post_object = PostModel.query.filter(PostModel.user == current_user).all()
+    post_object = PostModel.query.filter_by(user=current_user).all()
     post_list = [item for item in post_object]
     return render_template("profile.html", usuario=usuario, post_list=post_list)
 
@@ -192,3 +189,13 @@ def profile_image_handler(user, form, filename):
     ) as fp:
         thumb.save(fp)
     user.avatar = fileUrl
+
+@app.route('/delete_post/<id>', methods=['GET', 'POST'])
+def delete_post(id):
+    if request.method == 'POST':
+        post = PostModel.query.get(id)
+        db.session.delete(post)
+        db.session.commit()
+        return redirect(url_for('profile'))
+    else:
+        return redirect(url_for('home'))
