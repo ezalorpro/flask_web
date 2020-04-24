@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf import file
 from flask_web_app.models import User
-from flask_web_app.utils import EmailUniqueness
+from flask_web_app.utils import EmailUniqueness, PostTitleUniqueness
 from flask_web_app import photos
 
 import wtforms
@@ -85,3 +85,14 @@ class EditProfileForm(FlaskForm):
             file.FileAllowed(photos, "Archivo no valido, debe ser una imagen valida")
         ]
     )
+
+
+class PostForm(FlaskForm):
+    title = wtforms.StringField(
+        label="Titulo",
+        validators=[
+            validators.DataRequired(),
+            PostTitleUniqueness("Ya existe un post con ese titulo"),
+        ],
+    )
+    post_text = wtforms.TextAreaField(label="Contenido")

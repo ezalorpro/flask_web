@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from wtforms import ValidationError
 
-from flask_web_app.models import User
+from flask_web_app.models import User, PostModel
 
 
 class CustomPasswordField(wtforms.PasswordField):
@@ -24,6 +24,17 @@ class EmailUniqueness(object):
         temp = User.query.filter(User.email == field.data).first()
         if temp and not current_user.email == field.data:
             raise ValidationError(self.message)
+
+
+class PostTitleUniqueness(object):
+    def __init__(self, message=None):
+        self.message = message
+
+    def __call__(self, form, field):
+        temp = PostModel.query.filter_by(title=field.data).first()
+        if temp:
+            if not temp.id == (int(form.post_id) if form.post_id is not None else None):
+                raise ValidationError(self.message)
 
 
 def prefix_name(obj, file_data):

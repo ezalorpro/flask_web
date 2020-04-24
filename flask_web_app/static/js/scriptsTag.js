@@ -2,17 +2,11 @@ $(document).ready(function () {
     
     $('#formaPlots').submit(function (e) {
         e.preventDefault()
-        $.ajaxSetup({
-            beforeSend: function (xhr, settings) {
-                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                    xhr.setRequestHeader("X-CSRFToken", csrf_token)
-                }
-            }
-        });
         $.ajax({
             url: url_resultsplot,
             type: 'POST',
             data: {
+                'csrf_token': csrf_token,
                 'x_points': $("#x_points").val(),
                 'y_points': $("#y_points").val()
             },

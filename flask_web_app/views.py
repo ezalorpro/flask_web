@@ -7,15 +7,19 @@ from bokeh import plotting as plt
 from bokeh.embed import components
 from flask import jsonify, redirect, render_template, request, url_for
 from flask_admin.contrib.sqla import ModelView
-from flask_login import (current_user, login_required, login_url, login_user,
-                         logout_user)
+from flask_login import current_user, login_required, login_url, login_user, logout_user
 from PIL import Image, ImageOps
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
 from flask_web_app import admin, app, db, file_path, login_manager, photos
-from flask_web_app.forms import (EditProfileForm, LoginForm, PlotingForm,
-                                 RegistrationForm)
+from flask_web_app.forms import (
+    EditProfileForm,
+    LoginForm,
+    PlotingForm,
+    RegistrationForm,
+    PostForm,
+)
 from flask_web_app.models import PostModel, User
 
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
@@ -69,9 +73,7 @@ def registrar():
         return redirect(url_for("login"))
     elif data:
         if data["tipo"] == "username":
-            data = {
-                "flag": bool(User.query.filter_by(username=data["name"]).first())
-            }
+            data = {"flag": bool(User.query.filter_by(username=data["name"]).first())}
         elif data["tipo"] == "email":
             if not bool(re.match(EMAIL_REGX, data["email"])):
                 data = {
@@ -118,27 +120,13 @@ def ploting():
         return render_template("ploting.html", **context)
 
 
-@app.route("/posts")
-@login_required
-def list_posts():
-    post_object = PostModel.query.filter_by(user=current_user).all()
-    post_list = [item for item in post_object]
-    return render_template("list_posts.html", post_list=post_list)
-
-
-@app.route("/posts/<post_id>")
-@login_required
-def post_view(post_id):
-    post = PostModel.query.get(post_id)
-    print(post.user)
-    return render_template("post_template.html", post=post)
-
-
 @app.route("/profile")
 @login_required
 def profile():
     usuario = current_user
-    post_object = PostModel.query.filter_by(user=current_user).all()
+    post_object = (
+        PostModel.query.filter_by(user=current_user).order_by("post_date").all()[::-1]
+    )
     post_list = [item for item in post_object]
     return render_template("profile.html", usuario=usuario, post_list=post_list)
 
@@ -190,12 +178,69 @@ def profile_image_handler(user, form, filename):
         thumb.save(fp)
     user.avatar = fileUrl
 
-@app.route('/delete_post/<id>', methods=['GET', 'POST'])
+
+@app.route("/posts")
+@login_required
+def list_posts():
+    post_object = (
+        PostModel.query.filter_by(user=current_user).order_by("post_date").all()[::-1]
+    )
+    post_list = [item for item in post_object]
+    return render_template("list_posts.html", post_list=post_list)
+
+
+@app.route("/posts/<post_id>")
+@login_required
+def post_view(post_id):
+    post = PostModel.query.get(post_id)
+    print(post.user)
+    return render_template("post_template.html", post=post)
+
+
+@app.route("/delete_post/<id>", methods=["GET", "POST"])
+@login_required
 def delete_post(id):
-    if request.method == 'POST':
+    if request.method == "POST":
         post = PostModel.query.get(id)
         db.session.delete(post)
         db.session.commit()
-        return redirect(url_for('profile'))
+        return redirect(url_for("profile"))
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for("home"))
+
+
+@app.route("/create_post", methods=["GET", "POST"])
+@login_required
+def create_post():
+    post_form = PostForm()
+    post_form.post_id = None
+    if request.method == "POST" and post_form.validate_on_submit():
+        post = PostModel()
+        post_form.populate_obj(post)
+        post.user = current_user
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for("post_view", post_id=post.id))
+    else:
+        return render_template("create_post.html", post_form=post_form)
+
+
+@app.route("/edit_post/<post_id>", methods=["GET", "POST"])
+@login_required
+def edit_post(post_id):
+    post = PostModel.query.get(post_id)
+    post_form = PostForm(obj=post)
+    post_form.post_id = post_id
+    if request.method == "POST" and post_form.validate_on_submit():
+        post_form.populate_obj(post)
+        db.session.commit()
+        return redirect(url_for("post_view", post_id=post.id))
+    else:
+        return render_template("create_post.html", post_form=post_form, post=post)
+
+@app.route('/post_image_handler', methods=['POST'])
+def post_image_handler():
+    image = request.files['file']
+    image_name = request.files['file'].filename
+    photos.save(image, name=image_name)
+    return jsonify({'location': url_for('static', filename="images/" + image_name)})
