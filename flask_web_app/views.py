@@ -9,18 +9,19 @@ from flask import jsonify, redirect, render_template, request, url_for
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_required, login_url, login_user, logout_user
 from PIL import Image, ImageOps
+from sqlalchemy.event import listens_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
-from flask_web_app import admin, app, db, file_path, login_manager, photos
+from flask_web_app import admin, app, db, file_path, login_manager, photos, op
 from flask_web_app.forms import (
     EditProfileForm,
     LoginForm,
     PlotingForm,
-    RegistrationForm,
     PostForm,
+    RegistrationForm,
 )
-from flask_web_app.models import PostModel, User
+from flask_web_app.models import ImagePostModel, PostModel, User
 
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
 
@@ -193,7 +194,6 @@ def list_posts():
 @login_required
 def post_view(post_id):
     post = PostModel.query.get(post_id)
-    print(post.user)
     return render_template("post_template.html", post=post)
 
 
@@ -219,6 +219,8 @@ def create_post():
         post_form.populate_obj(post)
         post.user = current_user
         db.session.add(post)
+        db.session.flush()
+        manage_images(post)
         db.session.commit()
         return redirect(url_for("post_view", post_id=post.id))
     else:
@@ -233,14 +235,70 @@ def edit_post(post_id):
     post_form.post_id = post_id
     if request.method == "POST" and post_form.validate_on_submit():
         post_form.populate_obj(post)
+        db.session.flush()
+        manage_images(post)
         db.session.commit()
         return redirect(url_for("post_view", post_id=post.id))
     else:
         return render_template("create_post.html", post_form=post_form, post=post)
 
-@app.route('/post_image_handler', methods=['POST'])
+
+@login_required
+def manage_images(post):
+    images1 = ImagePostModel.query.filter_by(post=None).all()
+    if images1:
+        for image in images1:
+            if image.path in post.post_text:
+                image.post = post
+            else:
+                db.session.delete(image)
+
+    images2 = ImagePostModel.query.filter_by(post=post).all()
+    if images2:
+        for image in images2:
+            if image.path not in post.post_text:
+                db.session.delete(image)
+
+
+@app.route("/clean_data_post", methods=["GET", "POST"])
+def clean_data_post():
+    images = ImagePostModel.query.filter_by(post=None).all()
+    if images:
+        for image in images:
+            db.session.delete(image)
+    db.session.commit()
+    return redirect(url_for("profile"))
+
+
+@app.route("/post_image_handler", methods=["POST"])
 def post_image_handler():
-    image = request.files['file']
-    image_name = request.files['file'].filename
+    image = request.files["file"]
+    image_name = request.files["file"].filename
+    image_db = ImagePostModel()
+    db.session.add(image_db)
+    db.session.flush()
+    image_db.path = str(image_db.id) + "-" + image_name
+    image_name = image_db.path
+    db.session.commit()
     photos.save(image, name=image_name)
-    return jsonify({'location': url_for('static', filename="images/" + image_name)})
+    return jsonify({"location": url_for("static", filename="images/" + image_name)})
+
+
+@listens_for(PostModel, "before_delete")
+def del_post_model(mapper, connection, target):
+    images = ImagePostModel.query.filter_by(post=target).all()
+    if images:
+        for image in images:
+            try:
+                os.remove(op.join(file_path, image.path))
+            except OSError:
+                pass
+
+
+@listens_for(ImagePostModel, "before_delete")
+def del_image_post_model(mapper, connection, target):
+    if target.path:
+        try:
+            os.remove(op.join(file_path, target.path))
+        except OSError:
+            pass

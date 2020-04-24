@@ -163,6 +163,21 @@ class PostView(ModelView):
         return current_user.is_authenticated and current_user.is_admin
 
 
+class ImagesView(ModelView):
+    form_args = dict(post=dict(label="Post", validators=[validators.DataRequired()]))
+    # column_list = ["user", "title", "post_date", "post_modified"]
+    # form_columns = ["user", "title", "post_text"]
+    # form_widget_args = {
+    #     "user": {"required": True},
+    #     "post_date": {"readonly": True},
+    #     "post_modified": {"readonly": True},
+    # }
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
+
+
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))

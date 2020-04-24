@@ -57,6 +57,15 @@ class PostModel(db.Model):
     )
 
 
+class ImagePostModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    path = db.Column(db.String, index=True, unique=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("post_model.id", ondelete="CASCADE"))
+    post = db.relationship(
+        "PostModel", backref=db.backref("imagepostmodel", lazy="dynamic", passive_deletes=True)
+    )
+
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
