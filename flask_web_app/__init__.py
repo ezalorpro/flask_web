@@ -29,7 +29,7 @@ patch_request_class(app)
 csrf = CSRFProtect(app)
 csrf.init_app(app)
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+migrate = Migrate(app, db, compare_type=True)
 
 login_manager = LoginManager(app)
 login_manager.init_app(app)

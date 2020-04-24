@@ -84,7 +84,6 @@ class UserView(ModelView):
         "last_name",
         "location",
         "gender",
-        "information",
         "is_admin",
         "avatar",
     ]
@@ -152,6 +151,7 @@ class UserView(ModelView):
 
 class PostView(ModelView):
     form_args = dict(user=dict(label="Usuario", validators=[validators.DataRequired()]))
+    column_list = ["user", "title", "post_date", "post_modified"]
     form_columns = ["user", "title", "post_text"]
     form_widget_args = {
         "user": {"required": True},

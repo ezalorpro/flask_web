@@ -24,7 +24,7 @@ class User(db.Model, UserMixin):
     avatar = db.Column(db.String, index=True)
     location = db.Column(db.String, index=True)
     gender = db.Column(db.Enum(GenderderEnum), index=True)
-    information = db.Column(db.String, index=True)
+    information = db.Column(db.Text, index=True)
     is_admin = db.Column(db.Boolean, index=True)
 
     def set_password(self, password):
