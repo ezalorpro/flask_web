@@ -33,7 +33,7 @@ migrate = Migrate(app, db, compare_type=True)
 
 login_manager = LoginManager(app)
 login_manager.init_app(app)
-# toolbar = DebugToolbarExtension(app)
+toolbar = DebugToolbarExtension(app)
 
 from flask_web_app import admin_views
 
