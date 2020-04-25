@@ -7,7 +7,7 @@ import wtforms
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_admin import AdminIndexView, BaseView, expose, form, helpers
 from flask_admin.contrib.sqla import ModelView
-from flask_login import current_user, login_required, login_url, login_user, logout_user
+from flask_login import current_user, login_url, login_user, logout_user
 from jinja2 import Markup
 from sqlalchemy.event import listens_for
 from wtforms import validators
@@ -84,6 +84,7 @@ class UserView(ModelView):
         "last_name",
         "location",
         "gender",
+        "is_editor",
         "is_admin",
         "avatar",
     ]
@@ -99,6 +100,7 @@ class UserView(ModelView):
                 "location",
                 "gender",
                 "information",
+                "is_editor",
                 "is_admin",
                 "avatar",
             ]
@@ -116,6 +118,7 @@ class UserView(ModelView):
                 "location",
                 "gender",
                 "information",
+                "is_editor",
                 "is_admin",
                 "avatar",
             ]

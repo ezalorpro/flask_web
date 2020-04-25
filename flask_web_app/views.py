@@ -7,13 +7,14 @@ from bokeh import plotting as plt
 from bokeh.embed import components
 from flask import jsonify, redirect, render_template, request, url_for
 from flask_admin.contrib.sqla import ModelView
-from flask_login import current_user, login_required, login_url, login_user, logout_user
+from flask_login import current_user, login_url, login_user, logout_user
 from PIL import Image, ImageOps
 from sqlalchemy.event import listens_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
 from flask_web_app import admin, app, db, file_path, login_manager, photos, op
+from flask_web_app.utils import login_required
 from flask_web_app.forms import (
     EditProfileForm,
     LoginForm,
@@ -26,7 +27,7 @@ from flask_web_app.models import ImagePostModel, PostModel, User
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
 
 
-@app.route("/")
+@app.route("/", endpoint="home")
 def home():
     return render_template("home.html")
 
@@ -36,13 +37,13 @@ def unauthorized_callback():
     return redirect(login_url("login", request.url))
 
 
-@app.route("/logout")
+@app.route("/logout", endpoint="logout")
 def logout():
     logout_user()
     return redirect(url_for("home"))
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"], endpoint="login")
 def login():
     if current_user.is_authenticated:
         return redirect(url_for("home"))
@@ -61,7 +62,7 @@ def login():
         return render_template("login.html", form=form)
 
 
-@app.route("/registrar", methods=["GET", "POST"])
+@app.route("/registrar", methods=["GET", "POST"], endpoint="registrar")
 def registrar():
     form = RegistrationForm()
     data = request.args
@@ -97,7 +98,7 @@ def registrar():
         return render_template("registrar.html", form=form)
 
 
-@app.route("/ploting", methods=["GET", "POST"])
+@app.route("/ploting", methods=["GET", "POST"], endpoint="ploting")
 @login_required
 def ploting():
     if request.method == "POST":
@@ -121,7 +122,7 @@ def ploting():
         return render_template("ploting.html", **context)
 
 
-@app.route("/profile")
+@app.route("/profile", endpoint="profile")
 @login_required
 def profile():
     usuario = current_user
@@ -132,7 +133,7 @@ def profile():
     return render_template("profile.html", usuario=usuario, post_list=post_list)
 
 
-@app.route("/edit_profile", methods=["GET", "POST"])
+@app.route("/edit_profile", methods=["GET", "POST"], endpoint="edit_profile")
 @login_required
 def edit_profile():
     perfilForm = EditProfileForm(obj=current_user)
@@ -180,7 +181,7 @@ def profile_image_handler(user, form, filename):
     user.avatar = fileUrl
 
 
-@app.route("/posts")
+@app.route("/posts", endpoint="post")
 @login_required
 def list_posts():
     post_object = (
@@ -190,14 +191,14 @@ def list_posts():
     return render_template("list_posts.html", post_list=post_list)
 
 
-@app.route("/posts/<post_id>")
+@app.route("/posts/<post_id>", endpoint="post_view")
 @login_required
 def post_view(post_id):
     post = PostModel.query.get(post_id)
     return render_template("post_template.html", post=post)
 
 
-@app.route("/delete_post/<id>", methods=["GET", "POST"])
+@app.route("/delete_post/<id>", methods=["GET", "POST"], endpoint="delete_post")
 @login_required
 def delete_post(id):
     if request.method == "POST":
@@ -209,7 +210,7 @@ def delete_post(id):
         return redirect(url_for("home"))
 
 
-@app.route("/create_post", methods=["GET", "POST"])
+@app.route("/create_post", methods=["GET", "POST"], endpoint="create_post")
 @login_required
 def create_post():
     post_form = PostForm()
@@ -227,7 +228,7 @@ def create_post():
         return render_template("create_post.html", post_form=post_form)
 
 
-@app.route("/edit_post/<post_id>", methods=["GET", "POST"])
+@app.route("/edit_post/<post_id>", methods=["GET", "POST"], endpoint="edit_post")
 @login_required
 def edit_post(post_id):
     post = PostModel.query.get(post_id)
@@ -260,7 +261,8 @@ def manage_images(post):
                 db.session.delete(image)
 
 
-@app.route("/clean_data_post", methods=["GET", "POST"])
+@app.route("/clean_data_post", methods=["GET", "POST"], endpoint="clean_data_post")
+@login_required
 def clean_data_post():
     images = ImagePostModel.query.filter_by(post=None).all()
     if images:
@@ -270,7 +272,7 @@ def clean_data_post():
     return redirect(url_for("profile"))
 
 
-@app.route("/post_image_handler", methods=["POST"])
+@app.route("/post_image_handler", methods=["POST"], endpoint="post_image_handler")
 def post_image_handler():
     image = request.files["file"]
     image_name = request.files["file"].filename
