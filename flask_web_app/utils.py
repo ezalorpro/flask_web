@@ -14,9 +14,12 @@ from flask_web_app.models import User, PostModel
 
 class CustomPasswordField(wtforms.PasswordField):
     def populate_obj(self, obj, name):
-        if not obj.check_password(self.data) and self.data:
-            setattr(obj, "password_hash", generate_password_hash(self.data))
-
+        if obj.password_hash:
+            if not obj.check_password(self.data) and self.data:
+                setattr(obj, "password_hash", generate_password_hash(self.data))
+        else:
+            if self.data:
+                setattr(obj, "password_hash", generate_password_hash(self.data))
 
 class EmailUniqueness(object):
     def __init__(self, message=None):

@@ -1,0 +1,15 @@
+
+{% macro input(field, icon='', grid='') -%}
+    <div class="input-field {{grid}}">
+        <i class="material-icons prefix">{{icon}}</i>
+        {{ field.label }}
+        {{ field }}
+        {% if field.errors %}
+        <ul id="user_error" style="margin-top: 0px; margin-bottom: 0px;">
+            {% for error in field.errors %}
+            <li><span class="invalido" style="display: block;">{{ error }}</span></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+{%- endmacro %}

@@ -99,7 +99,7 @@ def registrar():
 
 
 @app.route("/ploting", methods=["GET", "POST"], endpoint="ploting")
-@login_required
+@login_required(role='regular_user')
 def ploting():
     if request.method == "POST":
         x_data = json.loads(request.form["x_points"])
@@ -123,18 +123,20 @@ def ploting():
 
 
 @app.route("/profile", endpoint="profile")
-@login_required
+@login_required(role='regular_user')
 def profile():
     usuario = current_user
     post_object = (
         PostModel.query.filter_by(user=current_user).order_by("post_date").all()[::-1]
     )
+    print(usuario.gender)
+    print(type(usuario.gender))
     post_list = [item for item in post_object]
     return render_template("profile.html", usuario=usuario, post_list=post_list)
 
 
 @app.route("/edit_profile", methods=["GET", "POST"], endpoint="edit_profile")
-@login_required
+@login_required(role='regular_user')
 def edit_profile():
     perfilForm = EditProfileForm(obj=current_user)
     if request.method == "POST" and perfilForm.validate_on_submit():
@@ -146,7 +148,8 @@ def edit_profile():
         db.session.commit()
         return redirect(url_for("profile"))
     else:
-        perfilForm.gender.data = perfilForm.gender.data.split(".")[1]
+        print(perfilForm.gender.data)
+        # perfilForm.gender.data = perfilForm.gender.data.split(".")[1]
         return render_template(
             "edit_profile.html", perfilForm=perfilForm, usuario=current_user
         )
@@ -181,8 +184,8 @@ def profile_image_handler(user, form, filename):
     user.avatar = fileUrl
 
 
-@app.route("/posts", endpoint="post")
-@login_required
+@app.route("/posts", endpoint="list_posts")
+@login_required(role=['admin', 'Editor'])
 def list_posts():
     post_object = (
         PostModel.query.filter_by(user=current_user).order_by("post_date").all()[::-1]
@@ -192,14 +195,14 @@ def list_posts():
 
 
 @app.route("/posts/<post_id>", endpoint="post_view")
-@login_required
+@login_required(role='regular_user')
 def post_view(post_id):
     post = PostModel.query.get(post_id)
     return render_template("post_template.html", post=post)
 
 
 @app.route("/delete_post/<id>", methods=["GET", "POST"], endpoint="delete_post")
-@login_required
+@login_required(role=['admin', 'Editor'])
 def delete_post(id):
     if request.method == "POST":
         post = PostModel.query.get(id)
@@ -211,7 +214,7 @@ def delete_post(id):
 
 
 @app.route("/create_post", methods=["GET", "POST"], endpoint="create_post")
-@login_required
+@login_required(role=['admin', 'Editor'])
 def create_post():
     post_form = PostForm()
     post_form.post_id = None
@@ -229,7 +232,7 @@ def create_post():
 
 
 @app.route("/edit_post/<post_id>", methods=["GET", "POST"], endpoint="edit_post")
-@login_required
+@login_required(role=['admin', 'Editor'])
 def edit_post(post_id):
     post = PostModel.query.get(post_id)
     post_form = PostForm(obj=post)
@@ -244,7 +247,7 @@ def edit_post(post_id):
         return render_template("create_post.html", post_form=post_form, post=post)
 
 
-@login_required
+@login_required(role=['admin', 'Editor'])
 def manage_images(post):
     images1 = ImagePostModel.query.filter_by(post=None).all()
     if images1:
@@ -262,7 +265,7 @@ def manage_images(post):
 
 
 @app.route("/clean_data_post", methods=["GET", "POST"], endpoint="clean_data_post")
-@login_required
+@login_required(role=['admin', 'Editor'])
 def clean_data_post():
     images = ImagePostModel.query.filter_by(post=None).all()
     if images:

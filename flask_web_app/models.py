@@ -8,29 +8,32 @@ from sqlalchemy import types
 
 from flask_web_app import db, login_manager
 
-# class ChoiceType(types.TypeDecorator):
 
-#     impl = types.String
+class ChoiceType(types.TypeDecorator):
 
-#     def __init__(self, choices, **kw):
-#         self.choices = dict(choices)
-#         super(ChoiceType, self).__init__(**kw)
+    impl = types.String
 
-#     def process_bind_param(self, value, dialect):
-#         return [k for k, v in self.choices.items() if v == value][0]
+    def __init__(self, choices, **kw):
+        self.choices = dict(choices)
+        super(ChoiceType, self).__init__(**kw)
 
-#     def process_result_value(self, value, dialect):
-#         return self.choices[value]
+    def process_bind_param(self, value, dialect):
+        for k, v in self.choices.items():
+            print(k, v)
+        print(value)
+        return [k for k, v in self.choices.items() if k == value][0]
 
-class GenderderEnum(enum.Enum):
-    nulo = "--"
-    hombre = "Hombre"
-    mujer = "Mujer"
+    def process_result_value(self, value, dialect):
+        try:
+            return value
+        except:
+            return None
 
-class RoleEnum(enum.Enum):
-    regular_user = "Usuario regular"
-    editor = "Editor"
-    admin = "Admin"
+
+genero = {"nulo": "--", "hombre": "Hombre", "mujer": "Mujer"}
+
+roles = {"regular_user": "Usuario regular", "editor": "Editor", "admin": "Admin"}
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -41,9 +44,9 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String, nullable=False)
     avatar = db.Column(db.String, index=True)
     location = db.Column(db.String, index=True)
-    gender = db.Column(db.Enum(GenderderEnum), index=True)
+    gender = db.Column(ChoiceType(genero), index=True, default="nulo")
     information = db.Column(db.Text, index=True)
-    role = db.Column(db.Enum(RoleEnum), index=True)
+    role = db.Column(ChoiceType(roles), index=True, default="regular_user")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -80,7 +83,8 @@ class ImagePostModel(db.Model):
     path = db.Column(db.String, index=True, unique=True)
     post_id = db.Column(db.Integer, db.ForeignKey("post_model.id", ondelete="CASCADE"))
     post = db.relationship(
-        "PostModel", backref=db.backref("imagepostmodel", lazy="dynamic", passive_deletes=True)
+        "PostModel",
+        backref=db.backref("imagepostmodel", lazy="dynamic", passive_deletes=True),
     )
 
 

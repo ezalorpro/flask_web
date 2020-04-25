@@ -29,7 +29,7 @@ class MyAdminIndexView(AdminIndexView):
         return redirect(url_for(".index"))
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.is_admin
+        return current_user.is_authenticated and current_user.role == 'admin'
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for("login.admin_login"))
@@ -42,7 +42,7 @@ class AdminLoginView(BaseView):
         if request.method == "POST":
             if helpers.validate_form_on_submit(form):
                 user = User.query.filter(User.username == form.username.data).first()
-                if user.is_admin:
+                if user.role == 'admin':
                     login_user(user, remember=form.recordar.data)
                     if request.form.get("next"):
                         return redirect(request.form.get("next"))
@@ -75,6 +75,18 @@ class UserView(ModelView):
             url_relative_path="images/",
             thumbnail_size=(50, 50, True),
         ),
+        "gender": wtforms.SelectField(
+            label="Genero",
+            choices=[("nulo", "--"), ("hombre", "Hombre"), ("mujer", "Mujer")],
+        ),
+        "role": wtforms.SelectField(
+            label="Role",
+            choices=[
+                ("regular_user", "Usuario regular"),
+                ("editor", "Editor"),
+                ("admin", "Admin"),
+            ],
+        ),
     }
 
     column_list = [
@@ -84,8 +96,7 @@ class UserView(ModelView):
         "last_name",
         "location",
         "gender",
-        "is_editor",
-        "is_admin",
+        "role",
         "avatar",
     ]
 
@@ -100,8 +111,7 @@ class UserView(ModelView):
                 "location",
                 "gender",
                 "information",
-                "is_editor",
-                "is_admin",
+                "role",
                 "avatar",
             ]
         )
@@ -118,8 +128,7 @@ class UserView(ModelView):
                 "location",
                 "gender",
                 "information",
-                "is_editor",
-                "is_admin",
+                "role",
                 "avatar",
             ]
         )
@@ -149,7 +158,7 @@ class UserView(ModelView):
     form_formatters = {"avatar": _list_thumbnail}
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.is_admin
+        return current_user.is_authenticated and current_user.role == 'admin'
 
 
 class PostView(ModelView):
@@ -163,7 +172,7 @@ class PostView(ModelView):
     }
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.is_admin
+        return current_user.is_authenticated and current_user.role == 'admin'
 
 
 class ImagesView(ModelView):
@@ -177,8 +186,7 @@ class ImagesView(ModelView):
     # }
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.is_admin
-
+        return current_user.is_authenticated and current_user.role == 'admin'
 
 
 @login_manager.user_loader
