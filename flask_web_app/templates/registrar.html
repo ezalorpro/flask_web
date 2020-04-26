@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from "jinja2_macros.html" import render_field  %}
+{% from "jinja2_macros.html" import input  %}
 
 {% block cssContent %}
 {% endblock cssContent %}
@@ -13,54 +13,12 @@
         <h5> Registrarse </h5>
       </div>
 
-      <div class="input-field col s12 m12 l12">
-        <i class="material-icons prefix">perm_identity</i>
-        {{ form.username.label }}
-        {{ form.username }}
-        {% if form.username.errors %}
-        <ul id="user_error" style="margin-top: 0px; margin-bottom: 0px;">
-          {% for error in form.username.errors %}
-          <li><span class="invalido" style="display: block;">{{ error }}</span></li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-      </div>
-
-      <div class="input-field col s12 m12 l6">
-        <i class="material-icons prefix">person</i>
-        {{ form.first_name.label }}
-        {{ form.first_name }}
-      </div>
-      <div class="input-field col s12 m12 l6">
-        <i class="material-icons prefix">person_add</i>
-        {{ form.last_name.label }}
-        {{ form.last_name }}
-      </div>
-
-      <div class="input-field col s12 m12 l12">
-        <i class="material-icons prefix">mail_outline</i>
-        {{ form.email.label }}
-        {{ form.email }}
-        {% if form.email.errors %}
-        <ul style="margin-top: 0px; margin-bottom: 0px;">
-          {% for error in form.email.errors %}
-          <li><span class="invalido" style="display: block;"><i class="material-icons">cancel</i> {{ error }}</span>
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-      </div>
-
-      <div class="input-field col s12 m12 l6">
-        <i class="material-icons prefix">lock_open</i>
-        {{ form.password1.label }}
-        {{ form.password1 }}
-      </div>
-      <div class="input-field col s12 m12 l6">
-        <i class="material-icons prefix">lock_outline</i>
-        {{ form.password2.label }}
-        {{ form.password2 }}
-      </div>
+      {{ input(form.username, 'perm_identity', 'col s12 m12 l12') }}
+      {{ input(form.first_name, 'person', 'col s12 m12 l6') }}
+      {{ input(form.last_name, 'person_add', 'col s12 m12 l6') }}
+      {{ input(form.email, 'mail_outline', 'col s12 m12 l12') }}
+      {{ input(form.password1, 'lock_open', 'col s12 m12 l6', False) }}
+      {{ input(form.password2, 'lock_outline', 'col s12 m12 l6', False) }}
 
       <div class="col s12">
         {% if form.password1.errors %}

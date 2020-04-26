@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "jinja2_macros.html" import input %}
 
 {% block cssContent %}
 {% endblock cssContent %}
@@ -10,16 +11,8 @@
             <form id="formaPlots">
                 {{ form.csrf_token }}
                 <h5 style="margin-bottom: 40px;" class="center"> Ingrese los vectores para (X, Y)</h5>
-                <div class="input-field col s12">
-                    <i class="material-icons prefix">border_horizontal</i>
-                    {{ form.x_points.label }}
-                    {{ form.x_points }}
-                </div>
-                <div class="input-field col s12">
-                    <i class="material-icons prefix">border_vertical</i>
-                    {{ form.y_points.label }}
-                    {{ form.y_points }}
-                </div>
+                {{ input(form.x_points, 'border_horizontal', 'col s12 m12 l12') }}
+                {{ input(form.y_points, 'border_vertical', 'col s12 m12 l12') }}
                 <div class="col s12 right-align">
                     <button id="graficar" type="submit" class="btn waves-effect waves-light light-blue accent-4 "
                         style="margin-bottom: 20px">Enviar<i class="material-icons right">done</i></button>

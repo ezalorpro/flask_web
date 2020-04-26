@@ -13,16 +13,11 @@ from sqlalchemy.event import listens_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
-from flask_web_app import admin, app, db, file_path, login_manager, photos, op
+from flask_web_app import admin, app, db, file_path, login_manager, op, photos
+from flask_web_app.forms import (EditProfileForm, LoginForm, PlotingForm,
+                                 PostForm, RegistrationForm)
+from flask_web_app.models import ImagePostModel, PostModel, User, genero
 from flask_web_app.utils import login_required
-from flask_web_app.forms import (
-    EditProfileForm,
-    LoginForm,
-    PlotingForm,
-    PostForm,
-    RegistrationForm,
-)
-from flask_web_app.models import ImagePostModel, PostModel, User
 
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
 
@@ -99,7 +94,7 @@ def registrar():
 
 
 @app.route("/ploting", methods=["GET", "POST"], endpoint="ploting")
-@login_required(role='regular_user')
+@login_required(role="regular_user")
 def ploting():
     if request.method == "POST":
         x_data = json.loads(request.form["x_points"])
@@ -123,7 +118,7 @@ def ploting():
 
 
 @app.route("/profile", endpoint="profile")
-@login_required(role='regular_user')
+@login_required(role="regular_user")
 def profile():
     usuario = current_user
     post_object = (
@@ -132,11 +127,13 @@ def profile():
     print(usuario.gender)
     print(type(usuario.gender))
     post_list = [item for item in post_object]
-    return render_template("profile.html", usuario=usuario, post_list=post_list)
+    return render_template(
+        "profile.html", usuario=usuario, post_list=post_list, genero=genero
+    )
 
 
 @app.route("/edit_profile", methods=["GET", "POST"], endpoint="edit_profile")
-@login_required(role='regular_user')
+@login_required(role="regular_user")
 def edit_profile():
     perfilForm = EditProfileForm(obj=current_user)
     if request.method == "POST" and perfilForm.validate_on_submit():
@@ -185,7 +182,7 @@ def profile_image_handler(user, form, filename):
 
 
 @app.route("/posts", endpoint="list_posts")
-@login_required(role=['admin', 'Editor'])
+@login_required(role=["admin", "editor"])
 def list_posts():
     post_object = (
         PostModel.query.filter_by(user=current_user).order_by("post_date").all()[::-1]
@@ -195,14 +192,14 @@ def list_posts():
 
 
 @app.route("/posts/<post_id>", endpoint="post_view")
-@login_required(role='regular_user')
+@login_required(role="regular_user")
 def post_view(post_id):
     post = PostModel.query.get(post_id)
     return render_template("post_template.html", post=post)
 
 
 @app.route("/delete_post/<id>", methods=["GET", "POST"], endpoint="delete_post")
-@login_required(role=['admin', 'Editor'])
+@login_required(role=["admin", "editor"])
 def delete_post(id):
     if request.method == "POST":
         post = PostModel.query.get(id)
@@ -214,7 +211,7 @@ def delete_post(id):
 
 
 @app.route("/create_post", methods=["GET", "POST"], endpoint="create_post")
-@login_required(role=['admin', 'Editor'])
+@login_required(role=["admin", "editor"])
 def create_post():
     post_form = PostForm()
     post_form.post_id = None
@@ -232,7 +229,7 @@ def create_post():
 
 
 @app.route("/edit_post/<post_id>", methods=["GET", "POST"], endpoint="edit_post")
-@login_required(role=['admin', 'Editor'])
+@login_required(role=["admin", "editor"])
 def edit_post(post_id):
     post = PostModel.query.get(post_id)
     post_form = PostForm(obj=post)
@@ -247,7 +244,7 @@ def edit_post(post_id):
         return render_template("create_post.html", post_form=post_form, post=post)
 
 
-@login_required(role=['admin', 'Editor'])
+@login_required(role=["admin", "editor"])
 def manage_images(post):
     images1 = ImagePostModel.query.filter_by(post=None).all()
     if images1:
@@ -265,7 +262,7 @@ def manage_images(post):
 
 
 @app.route("/clean_data_post", methods=["GET", "POST"], endpoint="clean_data_post")
-@login_required(role=['admin', 'Editor'])
+@login_required(role=["admin", "editor"])
 def clean_data_post():
     images = ImagePostModel.query.filter_by(post=None).all()
     if images:

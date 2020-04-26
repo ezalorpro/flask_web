@@ -29,7 +29,10 @@ class MyAdminIndexView(AdminIndexView):
         return redirect(url_for(".index"))
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.role == 'admin'
+        return current_user.is_authenticated and current_user.role in [
+            "admin",
+            "editor",
+        ]
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for("login.admin_login"))
@@ -42,13 +45,13 @@ class AdminLoginView(BaseView):
         if request.method == "POST":
             if helpers.validate_form_on_submit(form):
                 user = User.query.filter(User.username == form.username.data).first()
-                if user.role == 'admin':
+                if user.role in ["admin", "editor"]:
                     login_user(user, remember=form.recordar.data)
                     if request.form.get("next"):
                         return redirect(request.form.get("next"))
                     return redirect(url_for("admin.index"))
                 else:
-                    flash("Solo administradores pueden acceder")
+                    flash("Solo administradores y editores pueden acceder")
                     return self.render("admin/admin_login.html", form=form)
             else:
                 return self.render("admin/admin_login.html", form=form)
@@ -158,35 +161,46 @@ class UserView(ModelView):
     form_formatters = {"avatar": _list_thumbnail}
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.role == 'admin'
+        return current_user.is_authenticated and current_user.role == "admin"
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for("login.admin_login"))
 
 
 class PostView(ModelView):
-    form_args = dict(user=dict(label="Usuario", validators=[validators.DataRequired()]))
+    form_args = dict(
+        user=dict(
+            label="Usuario",
+            validators=[validators.DataRequired()],
+            default=current_user,
+        )
+    )
     column_list = ["user", "title", "post_date", "post_modified"]
     form_columns = ["user", "title", "post_text"]
     form_widget_args = {
-        "user": {"required": True},
+        "user": {"required": True, "disabled": True},
         "post_date": {"readonly": True},
         "post_modified": {"readonly": True},
     }
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.role == 'admin'
+        return current_user.is_authenticated and current_user.role in [
+            "admin",
+            "editor",
+        ]
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for("login.admin_login"))
 
 
 class ImagesView(ModelView):
     form_args = dict(post=dict(label="Post", validators=[validators.DataRequired()]))
-    # column_list = ["user", "title", "post_date", "post_modified"]
-    # form_columns = ["user", "title", "post_text"]
-    # form_widget_args = {
-    #     "user": {"required": True},
-    #     "post_date": {"readonly": True},
-    #     "post_modified": {"readonly": True},
-    # }
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.role == 'admin'
+        return current_user.is_authenticated and current_user.role == "admin"
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for("login.admin_login"))
 
 
 @login_manager.user_loader

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "jinja2_macros.html" import input, select  %}
 
 {% block cssContent %}
 {% endblock cssContent %}
@@ -32,47 +33,14 @@
                         </div>
                     </div>
                     <div class="col s12 m12 l7">
-
-                        <div class="input-field">
-                            <i class="material-icons prefix">person</i>
-                            {{ perfilForm.first_name.label }}
-                            {{ perfilForm.first_name }}
-                        </div>
-
-                        <div class="input-field">
-                            <i class="material-icons prefix">person_add</i>
-                            {{ perfilForm.last_name.label }}
-                            {{ perfilForm.last_name }}
-                        </div>
-
-                        <div class="input-field">
-                            <i class="material-icons prefix">mail_outline</i>
-                            {{ perfilForm.email.label }}
-                            {{ perfilForm.email }}
-                            {% if perfilForm.email.errors %}
-                            <ul style="margin-top: 0px; margin-bottom: 0px;">
-                                {% for error in perfilForm.email.errors %}
-                                <li><span class="invalido" style="display: block;"><i class="material-icons">cancel</i>
-                                        {{ error }}</span></li>
-                                {% endfor %}
-                            </ul>
-                            {% endif %}
-                        </div>
-
+                        {{ input(perfilForm.first_name, 'person', error_show=False) }}
+                        {{ input(perfilForm.last_name, 'person_add', error_show=False) }}
+                        {{ input(perfilForm.email, 'mail_outline') }}
                     </div>
                     <div class="col s12 m12 l12">
 
-                        <div class="input-field" style="margin-bottom: 23px; margin-top: 0px;">
-                            <i class="material-icons prefix">wc</i>
-                            {{ perfilForm.gender }}
-                            {{ perfilForm.gender.label }}
-                        </div>
-
-                        <div class="input-field">
-                            <i class="material-icons prefix">location_city</i>
-                            {{ perfilForm.location.label }}
-                            {{ perfilForm.location }}
-                        </div>
+                        {{ select(perfilForm.gender, 'wc', style="margin-bottom: 23px; margin-top: 0px;") }}
+                        {{ input(perfilForm.location, 'location_city', error_show=False) }}
 
                         <div class="input-field">
                             <i class="material-icons prefix">info</i>
@@ -87,7 +55,7 @@
                             {{ error }}</p>
                         {% endfor %}
                         {% endif %}
-                        
+
                         <div class="row right-align">
                             <div class="col s12" style="margin-bottom: -35px;">
                                 <a href="{{ url_for('profile') }}"

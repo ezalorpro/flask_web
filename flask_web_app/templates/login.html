@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from "jinja2_macros.html" import input  %}
 
 {% block content %}
 
@@ -12,31 +13,8 @@
             </div>
 
             {{ form.csrf_token }}
-            <div class="input-field col s12">
-                <i class="material-icons prefix">perm_identity</i>
-                {{ form.username.label(class="active") }}
-                {{ form.username }}
-                {% if form.username.errors %}
-                <ul>
-                    {% for error in form.username.errors %}
-                    <li><span class="red-text text-darken-1">{{ error }}</span></li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </div>
-            <div class="input-field col s12">
-                <i class="material-icons prefix">lock_open</i>
-                {{ form.password.label(class="active") }}
-                {{ form.password }}
-                {% if form.password.errors %}
-                <ul>
-                    {% for error in form.password.errors %}
-                    <li><span class="red-text text-darken-1"><i class="material-icons left">cancel</i>
-                            {{ error }}</span></li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </div>
+            {{ input(form.username, 'perm_identity', 'col s12 m12 l12') }}
+            {{ input(form.password, 'lock_open', 'col s12 m12 l12') }}
 
             <div class="col s12 right-align" style="margin-bottom: 20px">
                 <label>
