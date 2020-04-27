@@ -9,6 +9,6 @@ DEBUG = True
 SQLALCHEMY_ECHO = True
 SQLALCHEMY_DATABASE_URI = "postgresql:///flask_web"
 SQLALCHEMY_TRACK_MODIFICATIONS = True
-FLASK_ADMIN_SWATCH = "cerulean"
+FLASK_ADMIN_SWATCH = "paper"
 SECRET_KEY = "pelispedia"
 UPLOADED_PHOTOS_DEST = file_path

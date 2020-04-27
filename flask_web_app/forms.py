@@ -1,12 +1,11 @@
-from flask_wtf import FlaskForm
-from flask_wtf import file
+import wtforms
+from flask_admin import form
+from flask_wtf import FlaskForm, file
+from wtforms import ValidationError, validators
+
+from flask_web_app import photos
 from flask_web_app.models import User
 from flask_web_app.utils import EmailUniqueness, PostTitleUniqueness
-from flask_web_app import photos
-
-import wtforms
-from wtforms import validators, ValidationError
-from flask_admin import form
 
 
 class PlotingForm(FlaskForm):

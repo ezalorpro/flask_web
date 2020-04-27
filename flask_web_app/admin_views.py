@@ -9,18 +9,20 @@ from flask_admin import AdminIndexView, BaseView, expose, form, helpers
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_url, login_user, logout_user
 from jinja2 import Markup
+from sqlalchemy import func
 from sqlalchemy.event import listens_for
 from wtforms import validators
 
 from flask_web_app import app, db, file_path, login_manager, op
 from flask_web_app.forms import LoginForm, PlotingForm, RegistrationForm
-from flask_web_app.models import User
+from flask_web_app.models import ImagePostModel, PostModel, User
 from flask_web_app.utils import CustomPasswordField, prefix_name
 
 
 class MyAdminIndexView(AdminIndexView):
     @expose("/")
     def index(self):
+        self._template_args["variable"] = "texto :D"
         return super(MyAdminIndexView, self).index()
 
     @expose("/logout/")
@@ -66,6 +68,7 @@ class AdminLoginView(BaseView):
 
 
 class UserView(ModelView):
+    can_view_details = True
     form_extra_fields = {
         "password1": CustomPasswordField(
             "Contraseña", validators=[validators.InputRequired()]
@@ -168,6 +171,7 @@ class UserView(ModelView):
 
 
 class PostView(ModelView):
+    can_view_details = True
     form_args = dict(
         user=dict(
             label="Usuario",
@@ -182,6 +186,22 @@ class PostView(ModelView):
         "post_date": {"readonly": True},
         "post_modified": {"readonly": True},
     }
+
+    def get_query(self):
+        if current_user.role in ["admin"]:
+            return self.session.query(self.model)
+        else:
+            return super(PostView, self).get_query().filter_by(user=current_user)
+
+    def get_count_query(self):
+        if current_user.role in ["admin"]:
+            return self.session.query(func.count(PostModel.id)).select_from(self.model)
+        else:
+            return (
+                self.session.query(func.count(PostModel.id))
+                .select_from(self.model)
+                .filter_by(user=current_user)
+            )
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role in [
