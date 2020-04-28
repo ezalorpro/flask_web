@@ -79,6 +79,8 @@
           </ul>
         </li>
         <li><a href="{{ url_for('logout') }}">Cerrar session</a></li>
+        {% block post_tools %}
+        {% endblock post_tools %}
       </ul>
       {% endif %}
     </header>

@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block cssContent %}
+<style>
+  select {
+    display: inline-block !important;
+  }
+</style>
 {% endblock cssContent %}
 
 {% block content %}
@@ -11,41 +16,41 @@
       <div class="row">
         {% if post_form.post_id  %}
         <form action="{{ url_for('edit_post', post_id=post.id) }}" method="post" enctype="multipart/form-data">
-        {% else %}
-        <form action="{{ url_for('create_post') }}" method="post" enctype="multipart/form-data">
-        {% endif %}
-          {{ post_form.csrf_token }}
-          <div class="col s12 m12 l12">
+          {% else %}
+          <form action="{{ url_for('create_post') }}" method="post" enctype="multipart/form-data">
+            {% endif %}
+            {{ post_form.csrf_token }}
+            <div class="col s12 m12 l12">
 
-            <div class="input-field">
-              <i class="material-icons prefix">title</i>
-              {{ post_form.title.label }}
-              {{ post_form.title }}
-              {% if post_form.title.errors %}
-              <ul style="margin-top: 0px; margin-bottom: 0px;">
-                {% for error in post_form.title.errors %}
-                <li><span class="red-text text-darken-1">{{ error }}</span></li>
-                {% endfor %}
-              </ul>
-              {% endif %}
-            </div>
+              <div class="input-field">
+                <i class="material-icons prefix">title</i>
+                {{ post_form.title.label }}
+                {{ post_form.title }}
+                {% if post_form.title.errors %}
+                <ul style="margin-top: 0px; margin-bottom: 0px;">
+                  {% for error in post_form.title.errors %}
+                  <li><span class="red-text text-darken-1">{{ error }}</span></li>
+                  {% endfor %}
+                </ul>
+                {% endif %}
+              </div>
 
-            {{ post_form.post_text.label }}
-            <div class="input-field">
-              {{ post_form.post_text(class="materialize-textarea") }}
-            </div>
+              {{ post_form.post_text.label }}
+              <div class="input-field">
+                {{ post_form.post_text(class="materialize-textarea") }}
+              </div>
 
-            <div class="row right-align">
-              <div class="col s12" style="margin-bottom: -35px;">
-                <a href="{{ url_for('clean_data_post') }}"
-                  class="btn waves-effect waves-light red darken-1">cancelar<i
-                    class="material-icons right">cancel</i></a>
-                <button type="submit" class="btn waves-effect waves-light light-blue accent-4">Guardar<i
-                    class="material-icons right">save</i></button>
+              <div class="row right-align">
+                <div class="col s12" style="margin-bottom: -35px;">
+                  <a href="{{ url_for('clean_data_post') }}"
+                    class="btn waves-effect waves-light red darken-1">cancelar<i
+                      class="material-icons right">cancel</i></a>
+                  <button type="submit" class="btn waves-effect waves-light light-blue accent-4">Guardar<i
+                      class="material-icons right">save</i></button>
+                </div>
               </div>
             </div>
-          </div>
-        </form>
+          </form>
       </div>
     </div>
   </div>
@@ -94,5 +99,9 @@
       xhr.send(formData);
     }
   });
+  
+  $(document).ready(function () {
+    $('select').css('display', 'block');
+  })
 </script>
 {% endblock scriptsContent %}
