@@ -55,13 +55,13 @@
       {% for post in post_list %}
       <li class="collection-item">
         <div class="truncate">
-          {{post.title}}
+          {{ post.title }}
           <div>
             <a href="#modal{{post.id}}" class="secondary-content red-text text-darken-1 modal-trigger"><i
-                class="material-icons icon-separation2">delete</i><a
+                class="material-icons icon-separation2">delete</i></a><a
                 href="{{ url_for('edit_post', post_id=post.id) }}"
                 class="secondary-content light-blue-text text-accent-4"><i
-                  class="material-icons icon-separation">edit</i></a></a><a
+                  class="material-icons icon-separation">edit</i></a><a
               href="{{ url_for('post_view', post_id=post.id) }}"
               class="secondary-content light-blue-text text-accent-4"><i
                 class="material-icons icon-separation">visibility</i></a>

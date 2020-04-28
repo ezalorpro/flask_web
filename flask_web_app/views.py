@@ -24,7 +24,8 @@ EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
 
 @app.route("/", endpoint="home")
 def home():
-    return render_template("home.html")
+    posts = PostModel.query.order_by("post_date").all()[::-1]
+    return render_template("home.html", posts=posts)
 
 
 @login_manager.unauthorized_handler
@@ -180,15 +181,15 @@ def profile_image_handler(user, form, filename):
 @app.route("/posts", endpoint="list_posts")
 @login_required(role=["admin", "editor"])
 def list_posts():
-    post_object = (
+    post_list = (
         PostModel.query.filter_by(user=current_user).order_by("post_date").all()[::-1]
     )
-    post_list = [item for item in post_object]
+    # post_list = [item for item in post_object]
     return render_template("list_posts.html", post_list=post_list)
 
 
 @app.route("/posts/<post_id>", endpoint="post_view")
-@login_required(role="regular_user")
+# @login_required(role="regular_user")
 def post_view(post_id):
     post = PostModel.query.get(post_id)
     return render_template("post_template.html", post=post)

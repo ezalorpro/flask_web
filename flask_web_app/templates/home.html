@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class="row">
-  <div class="card-panel hoverable col s12 m12 l12">
+  <div class="card-panel col s12 m12 l12">
     <div class="carousel carousel-slider center">
       <div class="carousel-item" href="#one!">
         <h2>Primer Panel</h2>
@@ -30,6 +30,31 @@
         <p>This is your fourth panel</p>
       </div>
     </div>
+  </div>
+  <div class="col s12 m12 l12">
+    <ul class="collection with-header">
+      <li class="collection-header">
+        <h4 class="center">Post publicados</h4>
+      </li>
+      {% for post in posts %}
+      <li class="collection-item">
+        <div style="max-height: 400px;overflow: hidden;">
+          <span class="col s6 m6 l6">
+            <a href="{{ url_for('post_view', post_id=post.id) }}">
+              <h5>{{ post.title }}</h5>
+            </a>
+          </span>
+          <span class="col s6 m6 l6 right-align">
+            {{ post.post_date }}
+            <br>Autor: {{ post.user.username }}
+          </span>
+          <span class="col s12 m12 l12">
+          {{ post.post_text|safe}}
+          </span>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
   </div>
 </div>
 
