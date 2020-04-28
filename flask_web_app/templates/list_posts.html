@@ -7,23 +7,23 @@
 
 {% for post in post_list %}
 <div class="row">
-    <div class="card-panel hoverable col s12 m10 l8 offset-m1 offset-l2 ">
-        <div class="col s6">
-            <p>{{post.post_date}}</p>
-        </div>
-        <div class="col s6">
-            <p>{{post.post_modified}}</p>
-        </div>
-        <div class="col s12">
-            <p>{{post.title}}</p>
-        </div>
-        <div class="col s12">
-            <a href="{{ url_for('post_view', post_id=post.id) }}">Link</a>
-        </div>
-        <div class="col s12">
-            <p> </p>
-        </div>
+  <div class="card-panel hoverable col s12 m10 l8 offset-m1 offset-l2 ">
+    <div class="col s6">
+      <p>{{post.post_date}}</p>
     </div>
+    <div class="col s6">
+      <p>{{post.post_modified}}</p>
+    </div>
+    <div class="col s12">
+      <p>{{post.title}}</p>
+    </div>
+    <div class="col s12">
+      <a href="{{ url_for('post_view', post_id=post.id) }}">Link</a>
+    </div>
+    <div class="col s12">
+      <p> </p>
+    </div>
+  </div>
 </div>
 {% endfor %}
 

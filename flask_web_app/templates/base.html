@@ -10,6 +10,8 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/materialicons.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/materialize.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/general.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/prism.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
 
   {% block cssContent %}
@@ -38,7 +40,7 @@
               <li><a href="{{ url_for('ploting') }}">Ploting</a></li>
               <li><a href="{{ url_for('registrar') }}">registrarse</a></li>
               <li><a href="{{ url_for('login') }}">login</a></li>
-            </ul> 
+            </ul>
             {% else %}
             <ul class="right hide-on-med-and-down">
               <li><a href="{{ url_for('ploting') }}">Ploting</a></li>
@@ -96,6 +98,8 @@
   <script src="{{ url_for('static', filename='js/popper.min.js') }}" type="text/javascript">
   </script>
   <script src="{{ url_for('static', filename='js/materialize.min.js') }}" type="text/javascript">
+  </script>
+  <script src="{{ url_for('static', filename='js/prism.js') }}">
   </script>
   <script src="{{ url_for('static', filename='js/scripts.js') }}" type="text/javascript">
   </script>

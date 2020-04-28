@@ -6,33 +6,31 @@
 {% block content %}
 
 <div class="row">
-    <div class="card-panel hoverable col s12 m12 l12">
-        <div class="carousel carousel-slider center">
-            <div class="carousel-item" href="#one!">
-                <h2>Primer Panel</h2>
-                <p>Probando paneles D:!</p>
-            </div>
-            <div class="carousel-item" href="#two!">
-                <h2>Segundo Panel</h2>
-                <p>Probando paneles D:!</p>
-            </div>
-            <div class="carousel-item" href="#three!">
-                <h2>Tercer Panel</h2>
-                {% if current_user.is_authenticated %}
-                <a href="{{ url_for('ploting') }}"
-                    class="btn waves-effect waves-light light-blue accent-4">ploting</a>
-                {% else %}
-                <a href="{{ url_for('login') }}"
-                    class="btn waves-effect waves-light light-blue accent-4">Login</a>
-                {% endif %}
+  <div class="card-panel hoverable col s12 m12 l12">
+    <div class="carousel carousel-slider center">
+      <div class="carousel-item" href="#one!">
+        <h2>Primer Panel</h2>
+        <p>Probando paneles D:!</p>
+      </div>
+      <div class="carousel-item" href="#two!">
+        <h2>Segundo Panel</h2>
+        <p>Probando paneles D:!</p>
+      </div>
+      <div class="carousel-item" href="#three!">
+        <h2>Tercer Panel</h2>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('ploting') }}" class="btn waves-effect waves-light light-blue accent-4">ploting</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="btn waves-effect waves-light light-blue accent-4">Login</a>
+        {% endif %}
 
-            </div>
-            <div class="carousel-item" href="#four!">
-                <h2>Fourth Panel</h2>
-                <p>This is your fourth panel</p>
-            </div>
-        </div>
+      </div>
+      <div class="carousel-item" href="#four!">
+        <h2>Fourth Panel</h2>
+        <p>This is your fourth panel</p>
+      </div>
     </div>
+  </div>
 </div>
 
 

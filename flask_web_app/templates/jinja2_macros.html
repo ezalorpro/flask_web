@@ -1,32 +1,32 @@
 {% macro input(field, icon='', grid='', error_show=True) -%}
 <div class="input-field {{grid}}">
-    <i class="material-icons prefix">{{icon}}</i>
-    {{ field.label }}
-    {{ field }}
-    {% if error_show %}
-    {{ errors(field) }}
-    {% endif %}
+  <i class="material-icons prefix">{{icon}}</i>
+  {{ field.label }}
+  {{ field }}
+  {% if error_show %}
+  {{ errors(field) }}
+  {% endif %}
 </div>
 {%- endmacro %}
 
 {% macro select(field, icon='', grid='', error_show=True, style='') -%}
 <div class="input-field {{grid}}" style="{{style}}">
-    <i class="material-icons prefix">{{icon}}</i>
-    {{ field }}
-    {{ field.label }}
-    {% if error_show %}
-    {{ errors(field) }}
-    {% endif %}
+  <i class="material-icons prefix">{{icon}}</i>
+  {{ field }}
+  {{ field.label }}
+  {% if error_show %}
+  {{ errors(field) }}
+  {% endif %}
 </div>
 {%- endmacro %}
 
 {% macro errors(field) -%}
 {% if field.errors %}
 <ul id="user_error" style="margin-top: 0px; margin-bottom: 0px;">
-    {% for error in field.errors %}
-    <li><span class="invalido" style="display: block;"><i class="material-icons">cancel</i> {{ error }}</span>
-    </li>
-    {% endfor %}
+  {% for error in field.errors %}
+  <li><span class="invalido" style="display: block;"><i class="material-icons">cancel</i> {{ error }}</span>
+  </li>
+  {% endfor %}
 </ul>
 {% endif %}
 {%- endmacro %}

@@ -86,6 +86,10 @@ class ImagePostModel(db.Model):
         "PostModel",
         backref=db.backref("imagepostmodel", lazy="dynamic", passive_deletes=True),
     )
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
+    user = db.relationship(
+        "User", backref=db.backref("imagepostmodel", lazy="dynamic", passive_deletes=True)
+    )
 
 
 @login_manager.user_loader

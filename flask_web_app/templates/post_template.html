@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 
 {% block cssContent %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/prism.css') }}">
 {% endblock cssContent %}
 
 {% block content %}
 
 <div class="row">
-    <div class="flow-text col s12 m12 l12">
-        <h2 class="center" style="margin-top: 5px;">{{post.title}}</h2>
-        {{post.post_text|safe}}
-        <p> </p>
-        <p><a href="{{ url_for('profile') }}">Autor: {{post.user.first_name}} {{post.user.last_name}}</a></p>
-        <p>Creado el: {{post.post_date}}</p>
-        <p>Ultima modificacion: {{post.post_modified}}</p>
-    </div>
+  <div class="flow-text col s12 m12 l12">
+    <h2 class="center" style="margin-top: 5px;">{{post.title}}</h2>
+    {{post.post_text|safe}}
+    <p> </p>
+    <p><a href="{{ url_for('profile') }}">Autor: {{post.user.first_name}} {{post.user.last_name}}</a></p>
+    <p>Creado el: {{post.post_date}}</p>
+    <p>Ultima modificacion: {{post.post_modified}}</p>
+  </div>
 </div>
 
 {% endblock content %}

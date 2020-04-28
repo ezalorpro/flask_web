@@ -214,7 +214,10 @@ class PostView(ModelView):
 
 
 class ImagesView(ModelView):
-    form_args = dict(post=dict(label="Post", validators=[validators.DataRequired()]))
+    form_args = dict(
+        post=dict(label="Post", validators=[validators.DataRequired()]),
+        user=dict(label="Usuario", validators=[validators.DataRequired()]),
+    )
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role == "admin"

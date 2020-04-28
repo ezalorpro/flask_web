@@ -124,8 +124,6 @@ def profile():
     post_object = (
         PostModel.query.filter_by(user=current_user).order_by("post_date").all()[::-1]
     )
-    print(usuario.gender)
-    print(type(usuario.gender))
     post_list = [item for item in post_object]
     return render_template(
         "profile.html", usuario=usuario, post_list=post_list, genero=genero
@@ -145,8 +143,6 @@ def edit_profile():
         db.session.commit()
         return redirect(url_for("profile"))
     else:
-        print(perfilForm.gender.data)
-        # perfilForm.gender.data = perfilForm.gender.data.split(".")[1]
         return render_template(
             "edit_profile.html", perfilForm=perfilForm, usuario=current_user
         )
@@ -251,7 +247,7 @@ def manage_images(post):
         for image in images1:
             if image.path in post.post_text:
                 image.post = post
-            else:
+            elif image.user == current_user:
                 db.session.delete(image)
 
     images2 = ImagePostModel.query.filter_by(post=post).all()
@@ -276,7 +272,7 @@ def clean_data_post():
 def post_image_handler():
     image = request.files["file"]
     image_name = request.files["file"].filename
-    image_db = ImagePostModel()
+    image_db = ImagePostModel(user=current_user)
     db.session.add(image_db)
     db.session.flush()
     image_db.path = str(image_db.id) + "-" + image_name

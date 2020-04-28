@@ -42,6 +42,7 @@ admin = Admin(
     name="Flask Web",
     template_mode="bootstrap3",
     index_view=admin_views.MyAdminIndexView(),
+    base_template='admin/mybase.html'
 )
 
 from flask_web_app import admin_views, forms, models, views

@@ -1,15 +1,15 @@
-{% extends 'admin/base.html' %}
+{% extends 'admin/mybase.html' %}
 
 {% block access_control %}
 
 <ul class="nav navbar-nav navbar-right">
-    <li>
-        <a href="{{ url_for('admin.logout') }}">LogOut</a>
-    </li>
+  <li>
+    <a href="{{ url_for('admin.logout') }}">LogOut</a>
+  </li>
 </ul>
 
 {% endblock access_control %}
 
 {% block body %}
-    <h1> Holas {{variable}}</h1>
+<h1> Holas {{variable}}</h1>
 {% endblock body %}
