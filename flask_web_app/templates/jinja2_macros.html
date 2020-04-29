@@ -37,8 +37,8 @@
         <h4 class="center">Confirmacion de borrado</h4>
         <h5 class="center">¿Esta seguro que desea borrar este post?</h5>
         <p><strong>Titulo:</strong> {{obj.title}}</p>
-        <p><strong>Fecha de creacion:</strong> {{obj.post_date.strftime('%H:%M:%S  %d-%m-%Y')}}</p>
-        <p><strong>Ultima modificacion:</strong> {{obj.post_modified.strftime('%H:%M:%S  %d-%m-%Y')}}</p>
+        <p><strong>Fecha de creacion:</strong> {{obj.post_date.strftime('%d-%m-%Y  %I:%M:%S %p')}}</p>
+        <p><strong>Ultima modificacion:</strong> {{obj.post_modified.strftime('%d-%m-%Y  %I:%M:%S %p')}}</p>
 
       </div>
       <div class="modal-footer">

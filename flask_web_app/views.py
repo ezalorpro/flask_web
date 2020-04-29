@@ -189,7 +189,6 @@ def list_posts():
 
 
 @app.route("/posts/<post_id>", endpoint="post_view")
-# @login_required(role="regular_user")
 def post_view(post_id):
     post = PostModel.query.get(post_id)
     return render_template("post_template.html", post=post)
@@ -200,9 +199,12 @@ def post_view(post_id):
 def delete_post(id):
     if request.method == "POST":
         post = PostModel.query.get(id)
-        db.session.delete(post)
-        db.session.commit()
-        return redirect(url_for("profile"))
+        if post.user == current_user or current_user.role == 'admin':
+            db.session.delete(post)
+            db.session.commit()
+            return redirect(url_for("profile"))
+        else:
+            return redirect(url_for("home"))
     else:
         return redirect(url_for("home"))
 
@@ -229,6 +231,10 @@ def create_post():
 @login_required(role=["admin", "editor"])
 def edit_post(post_id):
     post = PostModel.query.get(post_id)
+    
+    if post.user != current_user and current_user.role not in ['admin']:
+        return redirect(url_for("home"))
+    
     post_form = PostForm(obj=post)
     post_form.post_id = post_id
     if request.method == "POST" and post_form.validate_on_submit():
@@ -248,7 +254,7 @@ def manage_images(post):
         for image in images1:
             if image.path in post.post_text:
                 image.post = post
-            elif image.user == current_user:
+            elif image.user == post.user:
                 db.session.delete(image)
 
     images2 = ImagePostModel.query.filter_by(post=post).all()

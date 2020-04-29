@@ -65,12 +65,31 @@
     selector: 'textarea',
     plugins: 'codesample image code table anchor charmap directionality emoticons hr imagetools insertdatetime media importcss nonbreaking pagebreak paste preview print quickbars save searchreplace toc visualblocks wordcount visualchars',
     image_title: true,
+    image_advtab: true,
     convert_urls: false,
     automatic_uploads: true,
     images_upload_url: "{{ url_for('post_image_handler') }}",
     height: "320",
     media_live_embeds: true,
     codesample_global_prismjs: true,
+    codesample_languages: [
+    { text: 'HTML/XML', value: 'markup' },
+    { text: 'JavaScript', value: 'javascript' },
+    { text: 'CSS', value: 'css' },
+    { text: 'PHP', value: 'php' },
+    { text: 'Ruby', value: 'ruby' },
+    { text: 'Python', value: 'python' },
+    { text: 'Java', value: 'java' },
+    { text: 'C', value: 'c' },
+    { text: 'C#', value: 'csharp' },
+    { text: 'C++', value: 'cpp' },
+    { text: 'MATLAB', value: 'matlab' },
+    { text: 'Django/jinja2', value: 'jinja2' },
+    { text: 'Markup templating', value: 'markup' },
+    ],
+    image_class_list: [
+    {title: 'responsive', value: 'responsive-img'},
+    ],
 
     images_upload_handler: function (blobInfo, success, failure) {
       var xhr, formData;

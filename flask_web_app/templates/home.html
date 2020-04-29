@@ -37,6 +37,21 @@
         <h4 class="center">Ultimos post publicados</h4>
       </li>
       {% for post in posts %}
+
+      <li class="collection-item avatar">
+        {% if post.user.avatar %}
+        <img src="{{ url_for('static', filename='images/' + post.user.avatar) }}" alt="" class="circle">
+        {% else %}
+        <img src="{{ url_for('static', filename='images/default.png') }}" alt="" class="circle">
+        {% endif %}
+        <span class="title">{{ post.title }}</span>
+        <p>{{ post.post_date.strftime('%d/%m/%Y  %I:%M:%S %p') }} <br>
+          {{ post.user.username }}
+        </p>
+        <a href="{{ url_for('post_view', post_id=post.id) }}" class="secondary-content"><i
+            class="material-icons light-blue-text text-accent-4">visibility</i></a>
+      </li>
+{# 
       <li class="collection-item" style="font-size: 16pt;">
         <div style="max-height: 300px;overflow: hidden;">
           <span class="col s6 m6 l6">
@@ -45,11 +60,11 @@
             </a>
           </span>
           <span class="col s6 m6 l6 right-align">
-            {{ post.post_date.strftime('%H:%M:%S  %d-%m-%Y') }}
+            {{ post.post_date.strftime('%d/%m/%Y  %I:%M:%S %p') }}
             <br>Autor: {{ post.user.username }}
           </span>
         </div>
-      </li>
+      </li> #}
       {% endfor %}
     </ul>
   </div>

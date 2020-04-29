@@ -12,14 +12,26 @@ from jinja2 import Markup
 from sqlalchemy import func
 from sqlalchemy.event import listens_for
 from wtforms import validators
+from datetime import date
 
 from flask_web_app import app, db, file_path, login_manager, op
 from flask_web_app.forms import LoginForm, PlotingForm, RegistrationForm
 from flask_web_app.models import ImagePostModel, PostModel, User
 from flask_web_app.utils import CustomPasswordField, prefix_name
+from flask_admin.model import typefmt
+
+def date_format(view, value):
+    return value.strftime('%d/%m/%Y  %I:%M:%S %p')
+
+MY_DEFAULT_FORMATTERS = dict(typefmt.BASE_FORMATTERS)
+MY_DEFAULT_FORMATTERS.update({
+    date: date_format
+})
 
 
 class MyAdminIndexView(AdminIndexView):
+    column_type_formatters = MY_DEFAULT_FORMATTERS
+    
     @expose("/")
     def index(self):
         self._template_args["variable"] = "texto :D"
@@ -69,6 +81,7 @@ class AdminLoginView(BaseView):
 
 class UserView(ModelView):
     can_view_details = True
+    column_type_formatters = MY_DEFAULT_FORMATTERS
     form_extra_fields = {
         "password1": CustomPasswordField(
             "Contraseña", validators=[validators.InputRequired()]
@@ -172,6 +185,7 @@ class UserView(ModelView):
 
 class PostView(ModelView):
     can_view_details = True
+    column_type_formatters = MY_DEFAULT_FORMATTERS
     form_args = dict(
         user=dict(
             label="Usuario",
@@ -214,6 +228,7 @@ class PostView(ModelView):
 
 
 class ImagesView(ModelView):
+    column_type_formatters = MY_DEFAULT_FORMATTERS
     form_args = dict(
         post=dict(label="Post", validators=[validators.DataRequired()]),
         user=dict(label="Usuario", validators=[validators.DataRequired()]),

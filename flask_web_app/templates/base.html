@@ -26,7 +26,9 @@
         <nav>
           {% if current_user.is_authenticated %}
           <ul id="dropdown1" class="dropdown-content">
+            {% if current_user.role in ['admin', 'editor'] %}
             <li><a href="{{ url_for('list_posts') }}" class="light-blue-text text-accent-4">Mis post</a></li>
+            {% endif %}
             <li><a href="{{ url_for('profile') }}" class="light-blue-text text-accent-4">Perfil</a></li>
             <li class="divider"></li>
             <li><a href="{{ url_for('logout') }}" class="light-blue-text text-accent-4">Cerrar session</a></li>
@@ -60,7 +62,9 @@
       {% else %}
       <ul class="sidenav sidenav-fixed invesible-top" id="mobile-demo">
         <li><a href="{{ url_for('ploting') }}" style="color: #0a0d1a;">Ploting</a></li>
+        {% if current_user.role in ['admin', 'editor'] %}
         <li><a href="{{ url_for('list_posts') }}">Mis post</a></li>
+        {% endif %}
         <li>
           <ul class="collapsible collapsible-accordion">
             <li>

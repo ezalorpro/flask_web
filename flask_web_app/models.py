@@ -63,14 +63,14 @@ class PostModel(db.Model):
     title = db.Column(db.String, index=True, nullable=False, unique=True)
     post_text = db.Column(db.Text, index=True)
     post_date = db.Column(
-        db.DateTime, index=True, nullable=False, default=datetime.datetime.utcnow
+        db.DateTime, index=True, nullable=False, default=datetime.datetime.now
     )
     post_modified = db.Column(
         db.DateTime,
         index=True,
         nullable=False,
-        default=datetime.datetime.utcnow,
-        onupdate=datetime.datetime.utcnow,
+        default=datetime.datetime.now,
+        onupdate=datetime.datetime.now,
     )
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
     user = db.relationship(
