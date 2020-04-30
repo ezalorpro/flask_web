@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    
+
     $('#formaPlots').submit(function (e) {
         e.preventDefault()
         $.ajax({
@@ -151,13 +151,13 @@ $(document).ready(function () {
 
             difflib['SequenceMatcher'](valor, $('#username').val());
             var comp_username = difflib.ratio()
-            
+
             difflib['SequenceMatcher'](valor, $('#email').val().split('@')[0]);
             var comp_email = difflib.ratio()
-            
+
             difflib['SequenceMatcher'](valor, $('#first_name').val());
             var comp_first = difflib.ratio()
-            
+
             difflib['SequenceMatcher'](valor, $('#last_name').val());
             var comp_last = difflib.ratio()
 
@@ -177,7 +177,7 @@ $(document).ready(function () {
                 $("#password13_validation").html('<i class="material-icons">cancel</i> La contraseña no debe coincidir con tus datos personales.');
                 flag_3 = false;
             }
-            
+
             if (flag_1 && flag_2 && flag_3) {
                 return true
             } else {
@@ -210,10 +210,121 @@ $(document).ready(function () {
     };
 
     function habilitar_boton(e) {
-        if (flag1*flag2*flag3*flag4) {
+        if (flag1 * flag2 * flag3 * flag4) {
             document.getElementById("btnRegistrar").disabled = false;
         } else {
             document.getElementById("btnRegistrar").disabled = true;
         }
     }
 });
+
+function tinymceFunc(image_url, csrf_token) {
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'codesample image code table anchor charmap directionality emoticons hr imagetools insertdatetime media importcss nonbreaking pagebreak paste preview print quickbars save searchreplace toc visualblocks wordcount visualchars',
+        image_title: true,
+        image_advtab: true,
+        convert_urls: false,
+        automatic_uploads: true,
+        images_upload_url: image_url,
+        height: "320",
+        media_live_embeds: true,
+        codesample_global_prismjs: true,
+        codesample_languages: [{
+                text: 'HTML/XML',
+                value: 'markup'
+            },
+            {
+                text: 'JavaScript',
+                value: 'javascript'
+            },
+            {
+                text: 'CSS',
+                value: 'css'
+            },
+            {
+                text: 'PHP',
+                value: 'php'
+            },
+            {
+                text: 'Ruby',
+                value: 'ruby'
+            },
+            {
+                text: 'Python',
+                value: 'python'
+            },
+            {
+                text: 'Java',
+                value: 'java'
+            },
+            {
+                text: 'C',
+                value: 'c'
+            },
+            {
+                text: 'C#',
+                value: 'csharp'
+            },
+            {
+                text: 'C++',
+                value: 'cpp'
+            },
+            {
+                text: 'MATLAB',
+                value: 'matlab'
+            },
+            {
+                text: 'Django/jinja2',
+                value: 'jinja2'
+            },
+            {
+                text: 'Markup templating',
+                value: 'markup'
+            },
+        ],
+        image_class_list: [{
+            title: 'responsive',
+            value: 'responsive-img'
+        }],
+        table_class_list: [{
+                title: 'materializeStriped',
+                value: 'striped'
+            },
+            {
+                title: 'materializeHighlight',
+                value: 'highlight'
+            },
+        ],
+        table_responsive_width: true,
+
+        images_upload_handler: function (blobInfo, success, failure) {
+            var xhr, formData;
+            xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.open('POST', image_url);
+            var token = csrf_token;
+            xhr.setRequestHeader("X-CSRF-TOKEN", token);
+            xhr.onload = function () {
+                var json;
+                if (xhr.status != 200) {
+                    failure('HTTP Error: ' + xhr.status);
+                    return;
+                }
+                json = JSON.parse(xhr.responseText);
+
+                if (!json || typeof json.location != 'string') {
+                    failure('Invalid JSON: ' + xhr.responseText);
+                    return;
+                }
+                success(json.location);
+            };
+            formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+            formData.append('csrf_token', token);
+            xhr.send(formData);
+        }
+    });
+
+    $('select').css('display', 'block').filter(".form-control").css('display', 'none');
+};

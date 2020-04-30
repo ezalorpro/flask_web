@@ -4,106 +4,11 @@
 {{ super() }}
 {{ lib.form_js() }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.2.1/tinymce.min.js" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/scriptsTag.js') }}" type="text/javascript">
+</script>
 <script>
-  tinymce.init({
-    selector: 'textarea',
-    plugins: 'codesample image code table anchor charmap directionality emoticons hr imagetools insertdatetime media importcss nonbreaking pagebreak paste preview print quickbars save searchreplace toc visualblocks wordcount visualchars',
-    image_title: true,
-    image_advtab: true,
-    convert_urls: false,
-    automatic_uploads: true,
-    images_upload_url: "{{ url_for('post_image_handler') }}",
-    height: "320",
-    media_live_embeds: true,
-    codesample_global_prismjs: true,
-    codesample_languages: [{
-        text: 'HTML/XML',
-        value: 'markup'
-      },
-      {
-        text: 'JavaScript',
-        value: 'javascript'
-      },
-      {
-        text: 'CSS',
-        value: 'css'
-      },
-      {
-        text: 'PHP',
-        value: 'php'
-      },
-      {
-        text: 'Ruby',
-        value: 'ruby'
-      },
-      {
-        text: 'Python',
-        value: 'python'
-      },
-      {
-        text: 'Java',
-        value: 'java'
-      },
-      {
-        text: 'C',
-        value: 'c'
-      },
-      {
-        text: 'C#',
-        value: 'csharp'
-      },
-      {
-        text: 'C++',
-        value: 'cpp'
-      },
-      {
-        text: 'MATLAB',
-        value: 'matlab'
-      },
-      {
-        text: 'Django/jinja2',
-        value: 'jinja2'
-      },
-      {
-        text: 'Markup templating',
-        value: 'markup'
-      },
-    ],
-    image_class_list: [{
-      title: 'responsive',
-      value: 'responsive-img'
-    }, ],
-
-    images_upload_handler: function (blobInfo, success, failure) {
-      var xhr, formData;
-      xhr = new XMLHttpRequest();
-      xhr.withCredentials = true;
-      xhr.open('POST', "{{ url_for('post_image_handler') }}");
-      var token = '{{ csrf_token() }}';
-      xhr.setRequestHeader("X-CSRF-TOKEN", token);
-      xhr.onload = function () {
-        var json;
-        if (xhr.status != 200) {
-          failure('HTTP Error: ' + xhr.status);
-          return;
-        }
-        json = JSON.parse(xhr.responseText);
-
-        if (!json || typeof json.location != 'string') {
-          failure('Invalid JSON: ' + xhr.responseText);
-          return;
-        }
-        success(json.location);
-      };
-      formData = new FormData();
-      formData.append('file', blobInfo.blob(), blobInfo.filename());
-      formData.append('csrf_token', token);
-      xhr.send(formData);
-    }
-  });
-
   $(document).ready(function () {
-    $('select').css('display', 'block').filter(".form-control").css('display', 'none');
-  })
+    tinymceFunc("{{ url_for('post_image_handler') }}", "{{ csrf_token() }}")
+  });
 </script>
 {% endblock %}
