@@ -2,36 +2,36 @@ import datetime
 import json
 import os
 import re
+from datetime import date
 
 import wtforms
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_admin import AdminIndexView, BaseView, expose, form, helpers
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.model import typefmt
 from flask_login import current_user, login_url, login_user, logout_user
 from jinja2 import Markup
 from sqlalchemy import func
 from sqlalchemy.event import listens_for
 from wtforms import validators
-from datetime import date
 
 from flask_web_app import app, db, file_path, login_manager, op
 from flask_web_app.forms import LoginForm, PlotingForm, RegistrationForm
 from flask_web_app.models import ImagePostModel, PostModel, User
 from flask_web_app.utils import CustomPasswordField, prefix_name
-from flask_admin.model import typefmt
+
 
 def date_format(view, value):
-    return value.strftime('%d/%m/%Y  %I:%M:%S %p')
+    return value.strftime("%d/%m/%Y  %I:%M:%S %p")
+
 
 MY_DEFAULT_FORMATTERS = dict(typefmt.BASE_FORMATTERS)
-MY_DEFAULT_FORMATTERS.update({
-    date: date_format
-})
+MY_DEFAULT_FORMATTERS.update({date: date_format})
 
 
 class MyAdminIndexView(AdminIndexView):
     column_type_formatters = MY_DEFAULT_FORMATTERS
-    
+
     @expose("/")
     def index(self):
         self._template_args["posts"] = PostModel.query.order_by("post_date").all()[::-1]
@@ -187,6 +187,10 @@ class UserView(ModelView):
 class PostView(ModelView):
     can_view_details = True
     column_type_formatters = MY_DEFAULT_FORMATTERS
+    details_template = "admin/details_post.html"
+    edit_template = "admin/edit_post.html"
+    create_template = "admin/create_post.html"
+
     form_args = dict(
         user=dict(
             label="Usuario",
@@ -201,6 +205,13 @@ class PostView(ModelView):
         "post_date": {"readonly": True},
         "post_modified": {"readonly": True},
     }
+
+    @staticmethod
+    def after_model_change(form, model, is_created):
+        from flask_web_app.views import manage_images
+
+        manage_images(model)
+        db.session.commit()
 
     def get_query(self):
         if current_user.role in ["admin"]:

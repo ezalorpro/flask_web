@@ -199,7 +199,7 @@ def post_view(post_id):
 def delete_post(id):
     if request.method == "POST":
         post = PostModel.query.get(id)
-        if post.user == current_user or current_user.role == 'admin':
+        if post.user == current_user or current_user.role == "admin":
             db.session.delete(post)
             db.session.commit()
             return redirect(url_for("profile"))
@@ -231,10 +231,10 @@ def create_post():
 @login_required(role=["admin", "editor"])
 def edit_post(post_id):
     post = PostModel.query.get(post_id)
-    
-    if post.user != current_user and current_user.role not in ['admin']:
+
+    if post.user != current_user and current_user.role not in ["admin"]:
         return redirect(url_for("home"))
-    
+
     post_form = PostForm(obj=post)
     post_form.post_id = post_id
     if request.method == "POST" and post_form.validate_on_submit():
