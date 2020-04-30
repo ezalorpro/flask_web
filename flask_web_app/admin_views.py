@@ -34,7 +34,8 @@ class MyAdminIndexView(AdminIndexView):
     
     @expose("/")
     def index(self):
-        self._template_args["variable"] = "texto :D"
+        self._template_args["posts"] = PostModel.query.order_by("post_date").all()[::-1]
+        self._template_args["usuarios"] = User.query.order_by(User.id).all()[:10]
         return super(MyAdminIndexView, self).index()
 
     @expose("/logout/")

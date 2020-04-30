@@ -1,15 +1,59 @@
 {% extends 'admin/mybase.html' %}
 
-{% block access_control %}
-
-<ul class="nav navbar-nav navbar-right">
-  <li>
-    <a href="{{ url_for('admin.logout') }}">LogOut</a>
-  </li>
-</ul>
-
-{% endblock access_control %}
-
 {% block body %}
-<h1> Holas {{variable}}</h1>
+<div class="row">
+  <div class="col-sm-8 col-lg-3">
+    <h3 class="text-muted">Usuarios</h3>
+    <div class="list-group">
+      {% for usuario in usuarios %}
+      <a href="{{ url_for('user.details_view', id=usuario.id) }}" class="list-group-item">
+        {{ usuario.username }}<br>
+        {{ usuario.email}}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-sm-8 col-lg-6">
+    <h3 class="text-muted">Ultimos post</h3>
+    <div class="list-group">
+      {% for post in posts %}
+      <a href="{{ url_for('post_view', post_id=post.id) }}" class="list-group-item">
+        {{ post.title }}<br>
+        <span class="badge"
+          style="background-color: #2196f3;">{{ post.post_date.strftime('%d/%m/%Y  %I:%M:%S %p')}}</span>
+        {{ post.user.username }}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 {% endblock body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-sm-8 col-lg-5">
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Don Quixote
+          <div class="image-parent">
+            <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/don_quixote.jpg"
+              class="img-fluid" alt="quixote">
+          </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          As I Lay Dying
+          <div class="image-parent">
+            <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/as_I_lay.jpg"
+              class="img-fluid" alt="lay">
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Things Fall Apart
+          <div class="image-parent">
+            <img
+              src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/things_fall_apart.jpg"
+              class="img-fluid" alt="things">
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

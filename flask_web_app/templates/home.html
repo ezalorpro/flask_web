@@ -51,20 +51,6 @@
         <a href="{{ url_for('post_view', post_id=post.id) }}" class="secondary-content"><i
             class="material-icons light-blue-text text-accent-4">visibility</i></a>
       </li>
-{# 
-      <li class="collection-item" style="font-size: 16pt;">
-        <div style="max-height: 300px;overflow: hidden;">
-          <span class="col s6 m6 l6">
-            <a href="{{ url_for('post_view', post_id=post.id) }}">
-              <h5>{{ post.title }}</h5>
-            </a>
-          </span>
-          <span class="col s6 m6 l6 right-align">
-            {{ post.post_date.strftime('%d/%m/%Y  %I:%M:%S %p') }}
-            <br>Autor: {{ post.user.username }}
-          </span>
-        </div>
-      </li> #}
       {% endfor %}
     </ul>
   </div>

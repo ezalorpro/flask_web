@@ -1,4 +1,15 @@
 {% extends 'admin/base.html' %}
+
+{% block access_control %}
+{{ super() }}
+<ul class="nav navbar-nav navbar-right">
+  <li>
+    <a href="{{ url_for('admin.logout') }}">LogOut</a>
+  </li>
+</ul>
+
+{% endblock access_control %}
+
 {% block head_css %}
 {{ super() }}
   <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
