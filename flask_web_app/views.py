@@ -17,7 +17,7 @@ from flask_web_app import admin, app, db, file_path, login_manager, op, photos
 from flask_web_app.forms import (EditProfileForm, LoginForm, PlotingForm,
                                  PostForm, RegistrationForm)
 from flask_web_app.models import ImagePostModel, PostModel, User, genero
-from flask_web_app.utils import login_required
+from flask_web_app.utils import login_required, add_tags
 
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
 
@@ -217,6 +217,10 @@ def create_post():
     if request.method == "POST" and post_form.validate_on_submit():
         post = PostModel()
         post_form.populate_obj(post)
+        tags_list = [val.strip() for val in post_form.tags_form.data.split(',')]
+        for tag in tags_list:
+           post_tag = add_tags(tag)
+           post.tags.append(post_tag)
         post.user = current_user
         db.session.add(post)
         db.session.flush()

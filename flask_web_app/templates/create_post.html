@@ -40,6 +40,11 @@
                 {{ post_form.post_text(class="materialize-textarea") }}
               </div>
 
+              {{ post_form.tags_form(type="hidden") }}
+              <div class="chips">
+                <input  class="input">
+              </div>
+
               <div class="row right-align">
                 <div class="col s12" style="margin-bottom: -35px;">
                   <a href="{{ url_for('clean_data_post') }}"
@@ -63,8 +68,23 @@
 <script src="{{ url_for('static', filename='js/scriptsTag.js') }}" type="text/javascript">
 </script>
 <script>
+  function updateChipInput(newval) {
+    var chips = []
+    newval.forEach(element => {
+      chips.push(element['tag'])
+    });
+    console.log(chips)
+    $('input[name="tags_form"]').val(chips);
+  }
+
   $(document).ready(function () {
-    tinymceFunc("{{ url_for('post_image_handler') }}", "{{ csrf_token() }}")
+    tinymceFunc("{{ url_for('post_image_handler') }}", "{{ csrf_token() }}");
+
+    $('.chips').chips({
+      onChipAdd: function (e, chip) {
+      updateChipInput(e[0].M_Chips.chipsData);
+      }
+    });
   });
 </script>
 {% endblock scriptsContent %}

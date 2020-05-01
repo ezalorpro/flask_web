@@ -9,7 +9,7 @@ from flask import current_app
 
 from flask_web_app import login_manager
 from flask_login import current_user
-from flask_web_app.models import User, PostModel
+from flask_web_app.models import User, PostModel, TagModel
 
 
 class CustomPasswordField(wtforms.PasswordField):
@@ -62,3 +62,13 @@ def login_required(role="regular_user"):
         return decorated_view
 
     return roles_wrapper
+
+
+def add_tags(tag):
+    existing_tag = TagModel.query.filter(TagModel.name == tag.lower()).one_or_none()
+    if existing_tag is not None:
+        return existing_tag
+    else:
+       new_tag = TagModel()
+       new_tag.name = tag.lower()
+       return new_tag

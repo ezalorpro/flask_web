@@ -95,3 +95,4 @@ class PostForm(FlaskForm):
         ],
     )
     post_text = wtforms.TextAreaField(label="Contenido")
+    tags_form = wtforms.StringField(label="Tags")

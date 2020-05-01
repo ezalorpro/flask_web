@@ -58,6 +58,13 @@ class User(db.Model, UserMixin):
         return f"<Usuario: {self.username}>"
 
 
+blog_tag = db.Table(
+    "post_tag",
+    db.Column("post_id", db.Integer, db.ForeignKey("post_model.id")),
+    db.Column("tag_id", db.Integer, db.ForeignKey("tag_model.id")),
+)
+
+
 class PostModel(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     title = db.Column(db.String, index=True, nullable=False, unique=True)
@@ -76,6 +83,13 @@ class PostModel(db.Model):
     user = db.relationship(
         "User", backref=db.backref("postmodel", lazy="dynamic", passive_deletes=True)
     )
+    tags = db.relationship("TagModel", secondary=blog_tag, back_populates="posts")
+
+
+class TagModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    name = db.Column(db.String, unique=True, nullable=False)
+    posts = db.relationship("PostModel", secondary=blog_tag, back_populates="tags")
 
 
 class ImagePostModel(db.Model):
@@ -88,7 +102,8 @@ class ImagePostModel(db.Model):
     )
     user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
     user = db.relationship(
-        "User", backref=db.backref("imagepostmodel", lazy="dynamic", passive_deletes=True)
+        "User",
+        backref=db.backref("imagepostmodel", lazy="dynamic", passive_deletes=True),
     )
 
 
