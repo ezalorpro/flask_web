@@ -85,11 +85,16 @@ class PostModel(db.Model):
     )
     tags = db.relationship("TagModel", secondary=blog_tag, back_populates="posts")
 
+    def __repr__(self):
+        return f"{self.user.username}: {self.title[:15]}"
 
 class TagModel(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String, unique=True, nullable=False)
     posts = db.relationship("PostModel", secondary=blog_tag, back_populates="tags")
+    
+    def __repr__(self):
+        return f"{self.name}"
 
 
 class ImagePostModel(db.Model):

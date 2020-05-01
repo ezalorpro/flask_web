@@ -50,4 +50,5 @@ from flask_web_app import admin_views, forms, models, views
 admin.add_view(admin_views.UserView(models.User, db.session, category="Usuario"))
 admin.add_view(admin_views.PostView(models.PostModel, db.session, category="Post"))
 admin.add_view(admin_views.ImagesView(models.ImagePostModel, db.session, category="Post"))
+admin.add_view(admin_views.TagsView(models.TagModel, db.session, category="Post"))
 admin.add_view(admin_views.AdminLoginView(endpoint="login"))

@@ -199,7 +199,7 @@ class PostView(ModelView):
         )
     )
     column_list = ["user", "title", "post_date", "post_modified"]
-    form_columns = ["user", "title", "post_text"]
+    form_columns = ["user", "title", "post_text", "tags"]
     form_widget_args = {
         "user": {"required": True, "disabled": True},
         "post_date": {"readonly": True},
@@ -252,6 +252,15 @@ class ImagesView(ModelView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for("login.admin_login"))
 
+class TagsView(ModelView):
+    
+    column_list = ["name", "posts"]
+    
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role == "admin"
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for("login.admin_login"))
 
 @login_manager.user_loader
 def load_user(id):
