@@ -20,6 +20,7 @@ from flask_web_app.forms import (
     PlotingForm,
     PostForm,
     RegistrationForm,
+    SearchForm,
 )
 from flask_web_app.models import ImagePostModel, PostModel, User, genero, TagModel
 from flask_web_app.utils import login_required, add_tags
@@ -321,6 +322,50 @@ def post_image_handler():
     db.session.commit()
     photos.save(image, name=image_name)
     return jsonify({"location": url_for("static", filename="images/" + image_name)})
+
+
+@app.route("/search/", methods=["GET", "POST"])
+@app.route("/search/<query_type>/<query>", methods=["GET", "POST"])
+def search(query_type=None, query=None):
+    form = SearchForm()
+    if request.method == "POST" and form.validate_on_submit():
+        query = request.form["busqueda"]
+        tipo = request.form["tipo"]
+        if tipo == "title":
+            results = (
+                db.session.query(PostModel)
+                .filter(PostModel.title.contains(query))
+                .order_by(PostModel.post_date)
+                .all()[::-1]
+            )
+        elif tipo == "author":
+            results = (
+                db.session.query(PostModel)
+                .filter(PostModel.user.has(User.username.contains(query)))
+                .order_by(PostModel.post_date)
+                .all()[::-1]
+            )
+        elif tipo == "tag":
+            results = (
+                db.session.query(PostModel)
+                .filter(PostModel.tags.any(TagModel.name.contains(query.lower())))
+                .order_by(PostModel.post_date)
+                .all()[::-1]
+            )
+        return render_template("search.html", form=form, results=results)
+    elif query:
+        if query_type == "tag":
+            results = (
+                db.session.query(PostModel)
+                .filter(PostModel.tags.any(TagModel.name.contains(query.lower())))
+                .order_by(PostModel.post_date)
+                .all()[::-1]
+            )
+        form.busqueda.data = query
+        form.tipo.data = query_type
+        return render_template("search.html", form=form, results=results)
+    else:
+        return render_template("search.html", form=form)
 
 
 @listens_for(PostModel, "before_delete")

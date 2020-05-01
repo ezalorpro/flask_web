@@ -1,7 +1,11 @@
-{% macro input(field, icon='', grid='', error_show=True) -%}
+{% macro input(field, icon='', grid='', error_show=True, label=True) -%}
 <div class="input-field {{grid}}">
+  {% if icon %}
   <i class="material-icons prefix">{{icon}}</i>
+  {% endif %}
+  {% if label %}
   {{ field.label }}
+  {% endif %}
   {{ field }}
   {% if error_show %}
   {{ errors(field) }}
@@ -11,7 +15,9 @@
 
 {% macro select(field, icon='', grid='', error_show=True, style='') -%}
 <div class="input-field {{grid}}" style="{{style}}">
+  {% if icon %}
   <i class="material-icons prefix">{{icon}}</i>
+  {% endif %}
   {{ field }}
   {{ field.label }}
   {% if error_show %}

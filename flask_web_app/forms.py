@@ -99,3 +99,16 @@ class PostForm(FlaskForm):
         label="Tags",
         validators=[validators.DataRequired("Debe agregar al menos un tag")],
     )
+
+class SearchForm(FlaskForm):
+    busqueda = wtforms.StringField(
+        label='Buscar',
+        validators=[
+            validators.DataRequired(),
+            PostTitleUniqueness("Debe escribir un termino a buscar"),
+        ],
+    )
+    tipo = wtforms.SelectField(
+        label="Buscar por:",
+        choices=[("title", "Titulo"), ("author", "Autor"), ("tag", "Tags")],
+    )

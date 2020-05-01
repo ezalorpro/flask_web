@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "jinja2_macros.html" import input, select %}
+
+{% block cssContent %}
+{% endblock cssContent %}
+
+{% block content %}
+<div class="card-panel">
+  <div class="row">
+    <div class="col s12 m12 l12">
+      <form action="{{ url_for('search') }}" method="POST" class="col s12">
+        {{ form.csrf_token }}
+        {{ input(form.busqueda, 'search', 'col s12 m12 l12') }}
+        {{ select(form.tipo, 'filter_none', 'col s12 m12 l12') }}
+        <div class="col s12 right-align">
+          <button id="graficar" type="submit" class="btn waves-effect waves-light light-blue accent-4 "
+            style="margin-bottom: 20px">Enviar<i class="material-icons right">done</i></button>
+        </div>
+      </form>
+    </div>
+    {% if results %}
+    <div class="col s12 m12 l12">
+      <ul class="collection">
+        {% for post in results %}
+        <li class="collection-item avatar">
+          {% if post.user.avatar %}
+          <img src="{{ url_for('static', filename='images/' + post.user.avatar) }}" alt="" class="circle">
+          {% else %}
+          <img src="{{ url_for('static', filename='images/default.png') }}" alt="" class="circle">
+          {% endif %}
+          <span class="title">{{ post.title }}</span>
+          <p>{{ post.post_date.strftime('%d/%m/%Y  %I:%M:%S %p') }} <br>
+            {{ post.user.username }}
+          </p>
+          <a href="{{ url_for('post_view', post_id=post.id) }}" class="secondary-content"><i
+              class="material-icons light-blue-text text-accent-4">visibility</i></a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% else %}
+      <div class="col s12 m12 l8">
+        Sin resultados
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}
+
+{% block scriptsContent %}
+{% endblock scriptsContent %}

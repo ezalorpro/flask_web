@@ -20,7 +20,7 @@
       {% if post.tags %}
       Tags:
       {% for tag in post.tags %}
-      <div class="chip"><a href="{{ url_for('home') }}" style="color: rgba(0, 0, 0, 0.6);">{{ tag.name }}</a></div>
+      <div class="chip"><a href="{{ url_for('search', query=tag.name, query_type='tag') }}" style="color: rgba(0, 0, 0, 0.6);">{{ tag.name }}</a></div>
       {% endfor %}
       {% endif %}
     </span>
