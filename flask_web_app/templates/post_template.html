@@ -17,9 +17,12 @@
       <p>Ultima modificacion: {{post.post_modified.strftime('%d/%m/%Y  %I:%M:%S %p')}}</p>
     </span>
     <span class="col s6 m6 l6 right-align">
+      {% if post.tags %}
+      Tags:
       {% for tag in post.tags %}
-      <div class="chip"> {{ tag.name }}</div>
-        {% endfor %}
+      <div class="chip"><a href="{{ url_for('home') }}" style="color: rgba(0, 0, 0, 0.6);">{{ tag.name }}</a></div>
+      {% endfor %}
+      {% endif %}
     </span>
   </div>
 </div>

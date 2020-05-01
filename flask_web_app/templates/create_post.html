@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "jinja2_macros.html" import errors  %}
 
 {% block cssContent %}
 <style>
@@ -41,9 +42,12 @@
               </div>
 
               {{ post_form.tags_form(type="hidden") }}
-              <div class="chips">
-                <input  class="input">
+              Tags:
+              <div class="chips chips-autocomplete chips-initial">
+                <input class="input">
               </div>
+
+              {{ errors(post_form.tags_form) }}
 
               <div class="row right-align">
                 <div class="col s12" style="margin-bottom: -35px;">
@@ -73,18 +77,28 @@
     newval.forEach(element => {
       chips.push(element['tag'])
     });
-    console.log(chips)
     $('input[name="tags_form"]').val(chips);
   }
 
   $(document).ready(function () {
     tinymceFunc("{{ url_for('post_image_handler') }}", "{{ csrf_token() }}");
 
-    $('.chips').chips({
+    $('.chips-autocomplete').chips({
       onChipAdd: function (e, chip) {
-      updateChipInput(e[0].M_Chips.chipsData);
+        updateChipInput(e[0].M_Chips.chipsData);
+      },
+      onChipDelete: function (e, chip) {
+        updateChipInput(e[0].M_Chips.chipsData);
+      },
+      data: {{ current_tags|safe }},
+      autocompleteOptions: {
+        data: {{ tags|safe }},
+        limit: Infinity,
+        minLength: 1
       }
     });
+
+    updateChipInput($('.chips-autocomplete')[0].M_Chips.chipsData);
   });
 </script>
 {% endblock scriptsContent %}

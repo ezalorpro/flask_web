@@ -14,9 +14,14 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
 from flask_web_app import admin, app, db, file_path, login_manager, op, photos
-from flask_web_app.forms import (EditProfileForm, LoginForm, PlotingForm,
-                                 PostForm, RegistrationForm)
-from flask_web_app.models import ImagePostModel, PostModel, User, genero
+from flask_web_app.forms import (
+    EditProfileForm,
+    LoginForm,
+    PlotingForm,
+    PostForm,
+    RegistrationForm,
+)
+from flask_web_app.models import ImagePostModel, PostModel, User, genero, TagModel
 from flask_web_app.utils import login_required, add_tags
 
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
@@ -217,10 +222,12 @@ def create_post():
     if request.method == "POST" and post_form.validate_on_submit():
         post = PostModel()
         post_form.populate_obj(post)
-        tags_list = [val.strip() for val in post_form.tags_form.data.split(',')]
+        tags_list = [val.strip() for val in post_form.tags_form.data.split(",")]
+        tag_acum = []
         for tag in tags_list:
-           post_tag = add_tags(tag)
-           post.tags.append(post_tag)
+            if tag:
+                tag_acum.append(add_tags(tag))
+        post.tags = tag_acum
         post.user = current_user
         db.session.add(post)
         db.session.flush()
@@ -228,7 +235,15 @@ def create_post():
         db.session.commit()
         return redirect(url_for("post_view", post_id=post.id))
     else:
-        return render_template("create_post.html", post_form=post_form)
+        tags_obj = TagModel.query.all()
+        tags = json.dumps({k.name: None for k in tags_obj})
+        current_tags = {}
+        return render_template(
+            "create_post.html",
+            post_form=post_form,
+            tags=tags,
+            current_tags=current_tags,
+        )
 
 
 @app.route("/edit_post/<post_id>", methods=["GET", "POST"], endpoint="edit_post")
@@ -243,12 +258,27 @@ def edit_post(post_id):
     post_form.post_id = post_id
     if request.method == "POST" and post_form.validate_on_submit():
         post_form.populate_obj(post)
+        tags_list = [val.strip() for val in post_form.tags_form.data.split(",")]
+        tag_acum = []
+        for tag in tags_list:
+            if tag:
+                tag_acum.append(add_tags(tag))
+        post.tags = tag_acum
         db.session.flush()
         manage_images(post)
         db.session.commit()
         return redirect(url_for("post_view", post_id=post.id))
     else:
-        return render_template("create_post.html", post_form=post_form, post=post)
+        tags_obj = TagModel.query.all()
+        tags = json.dumps({k.name: None for k in tags_obj})
+        current_tags = [{"tag": tag.name} for tag in post.tags]
+        return render_template(
+            "create_post.html",
+            post_form=post_form,
+            post=post,
+            tags=tags,
+            current_tags=current_tags,
+        )
 
 
 @login_required(role=["admin", "editor"])

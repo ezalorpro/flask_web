@@ -187,6 +187,7 @@ class UserView(ModelView):
 class PostView(ModelView):
     can_view_details = True
     column_type_formatters = MY_DEFAULT_FORMATTERS
+    column_type_formatters_detail = MY_DEFAULT_FORMATTERS
     details_template = "admin/details_post.html"
     edit_template = "admin/edit_post.html"
     create_template = "admin/create_post.html"
@@ -196,9 +197,14 @@ class PostView(ModelView):
             label="Usuario",
             validators=[validators.DataRequired()],
             default=current_user,
+        ),
+        tags=dict(
+            label="Tags",
+            validators=[validators.DataRequired("Debe agregar al menos un tag")]
         )
     )
     column_list = ["user", "title", "post_date", "post_modified"]
+    column_details_list = ["user", "title", "post_text", "post_date", "post_modified", "tags"]
     form_columns = ["user", "title", "post_text", "tags"]
     form_widget_args = {
         "user": {"required": True, "disabled": True},

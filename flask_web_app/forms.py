@@ -95,4 +95,7 @@ class PostForm(FlaskForm):
         ],
     )
     post_text = wtforms.TextAreaField(label="Contenido")
-    tags_form = wtforms.StringField(label="Tags")
+    tags_form = wtforms.StringField(
+        label="Tags",
+        validators=[validators.DataRequired("Debe agregar al menos un tag")],
+    )

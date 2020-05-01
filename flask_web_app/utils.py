@@ -65,7 +65,7 @@ def login_required(role="regular_user"):
 
 
 def add_tags(tag):
-    existing_tag = TagModel.query.filter(TagModel.name == tag.lower()).one_or_none()
+    existing_tag = TagModel.query.filter(TagModel.name == tag.lower()).first()
     if existing_tag is not None:
         return existing_tag
     else:
