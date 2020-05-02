@@ -14,17 +14,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
 from flask_web_app import admin, app, db, file_path, login_manager, op, photos
-from flask_web_app.forms import (
-    EditProfileForm,
-    LoginForm,
-    PlotingForm,
-    PostForm,
-    RegistrationForm,
-    SearchForm,
-    CommentForm,
-)
-from flask_web_app.models import ImagePostModel, PostModel, User, genero, TagModel, CommentModel
-from flask_web_app.utils import login_required, add_tags
+from flask_web_app.forms import (CommentForm, EditProfileForm, LoginForm,
+                                 PlotingForm, PostForm, RegistrationForm,
+                                 SearchForm)
+from flask_web_app.models import (CommentModel, ImagePostModel, PostModel,
+                                  TagModel, User, genero)
+from flask_web_app.utils import add_tags, login_required
 
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
 
@@ -191,7 +186,6 @@ def list_posts():
     post_list = (
         PostModel.query.filter_by(user=current_user).order_by("post_date").all()[::-1]
     )
-    # post_list = [item for item in post_object]
     return render_template("list_posts.html", post_list=post_list)
 
 
@@ -199,9 +193,15 @@ def list_posts():
 def post_view(post_id):
     post = PostModel.query.get(post_id)
     form = CommentForm()
-    return render_template("post_template.html", post=post, form=form)
+    comments = (
+        CommentModel.query.filter_by(post_id=post.id).order_by("comment_date").all()
+    )
+    return render_template(
+        "post_template.html", post=post, form=form, comments=comments
+    )
 
-@app.route('/comment_post/<post_id>', methods=['POST'], endpoint="comment_post")
+
+@app.route("/comment_post/<post_id>", methods=["POST"], endpoint="comment_post")
 @login_required(role="regular_user")
 def comment_post(post_id):
     form = CommentForm()
@@ -211,8 +211,17 @@ def comment_post(post_id):
         post = PostModel.query.get(post_id)
         post.comments.append(comment)
         db.session.commit()
-        return redirect(url_for('post_view', post_id=post_id))
-        
+        return redirect(url_for("post_view", post_id=post_id))
+
+
+@app.route("/edit_comment/<comment_id>", methods=["POST"], endpoint="edit_comment")
+@login_required(role="regular_user")
+def edit_comment(comment_id):
+    comment = CommentModel.query.get(comment_id)
+    comment.comment_text = request.form["com_" + str(comment.id)]
+    db.session.commit()
+    return redirect(url_for("post_view", post_id=comment.post_id))
+
 
 @app.route("/delete_post/<id>", methods=["GET", "POST"], endpoint="delete_post")
 @login_required(role=["admin", "editor"])

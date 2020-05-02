@@ -31,7 +31,7 @@
       <li class="collection-header">
         <h6 class="center">Comentarios</h6>
       </li>
-      {% for comment in post.comments %}
+      {% for comment in comments %}
       <li class="collection-item avatar">
         {% if comment.user.avatar %}
         <img src="{{ url_for('static', filename='images/' + comment.user.avatar) }}" alt="" class="circle">
@@ -39,10 +39,17 @@
         <img src="{{ url_for('static', filename='images/default.png') }}" alt="" class="circle">
         {% endif %}
         <div>
-          {{ comment.comment_text|safe }}
+          <input type="hidden" name="com_{{comment.id}}" id="comentario_{{comment.id}}"
+            value='{{ comment.comment_text|safe }}'>
+          <div id="textarea_{{comment.id}}">
+            {{ comment.comment_text|safe }}
+          </div>
           <div class="right-align">
             {{ comment.user.username }} <br>
             {{ comment.comment_date.strftime('%d/%m/%Y  %I:%M:%S %p') }}
+            {% if current_user == comment.user %}
+            <br><a href="!#" id='link_{{comment.id}}'><i class="material-icons icon-separation">edit</i></a>
+            {% endif %}
           </div>
         </div>
       </li>
@@ -56,10 +63,10 @@
     </ul>
 
     {% if current_user.is_authenticated %}
-    <form action="{{ url_for('comment_post', post_id=post.id) }}" method="post">
+    <form action="{{ url_for('comment_post', post_id=post.id) }}" method="post" id="principal_form">
       {{ form.csrf_token }}
       {{ form.comment_text }}
-      <button type="submit" class="btn waves-effect waves-light light-blue accent-4">Comentar<i
+      <button id='boton_principal' type="submit" class="btn waves-effect waves-light light-blue accent-4">Comentar<i
           class="material-icons right">comment</i></button>
     </form>
     {% endif %}
@@ -92,7 +99,62 @@
 </script>
 <script>
   $(document).ready(function () {
-    tinymceFuncComment();
+    tinymceFuncComment('#comment_text');
+    {% for comment in comments %}
+    $('#link_{{comment.id}}').on('click', function (e) {
+      e.preventDefault();
+      $('#comentario_{{comment.id}}').wrap('<form id="form_{{comment.id}}" method="POST" action="{{ url_for("edit_comment", comment_id=comment.id) }}"></form>');
+      tinymceFuncComment('#comentario_{{comment.id}}');
+      $('<a class="btn waves-effect waves-light red darken-1" id="cancel_{{comment.id}}">Cancelar<i class="material-icons right">cancel</i></a>').appendTo('#form_{{comment.id}}');
+      $('<button id="submit_{{comment.id}}" type="submit" class="btn waves-effect waves-light light-blue accent-4">Comentar<i class="material-icons right">comment</i></button>').appendTo('#form_{{comment.id}}');
+      $('{{ form.csrf_token }}').appendTo('#form_{{comment.id}}');
+      $('#textarea_{{comment.id}}').hide()
+      tinymce.remove('#comment_text');
+      $('#boton_principal').hide()
+      $('#comment_text').hide()
+      
+      $("#form_{{comment.id}}").submit(function() {
+        if (tinymce.activeEditor.getContent()) {
+          return true
+        } else {
+          alert('Debe escribir algo para poder comentar');
+          return false
+        }
+      });
+
+      {% for links in comments %}
+        $('#link_{{links.id}}').hide()
+      {% endfor %}
+
+      $("#cancel_{{comment.id}}").on('click', function (en) {
+        en.preventDefault();
+        $("#cancel_{{comment.id}}").unwrap();
+        tinymce.remove('#comentario_{{comment.id}}');
+        $('input[name ="csrf_token"]').remove();
+        $('#textarea_{{comment.id}}').show()
+        $('#comment_text').show()
+        tinymceFuncComment('#comment_text');
+        $('#boton_principal').show()
+        $("#submit_{{comment.id}}").remove();
+        $("#cancel_{{comment.id}}").remove();"submit_{{comment.id}}"
+        $('{{ form.csrf_token }}').appendTo('#principal_form');
+
+        {% for links in comments %}
+          $('#link_{{links.id}}').show()
+        {% endfor %}
+      });
+    
+    }); 
+    {% endfor %}
+    
+    $("#principal_form").submit(function() {
+      if (tinymce.activeEditor.getContent()) {
+        return true
+      } else {
+        alert('Debe escribir algo para poder comentar');
+        return false
+      }
+    });
   });
 </script>
 {% endblock scriptsContent %}

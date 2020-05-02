@@ -1,5 +1,6 @@
 from flask_web_app import app, db
-from flask_web_app.models import User, PostModel, ImagePostModel, TagModel
+from flask_web_app.models import (CommentModel, ImagePostModel, PostModel,
+                                  TagModel, User)
 
 
 @app.shell_context_processor
@@ -10,6 +11,7 @@ def make_shell_context():
         "PostModel": PostModel,
         "ImagePostModel": ImagePostModel,
         "TagModel": TagModel,
+        "CommentModel": CommentModel,
     }
 
 

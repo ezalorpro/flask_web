@@ -329,9 +329,9 @@ function tinymceFunc(image_url, csrf_token) {
     $('select').css('display', 'block').filter(".form-control").css('display', 'none');
 };
 
-function tinymceFuncComment() {
+function tinymceFuncComment(elemento) {
     tinymce.init({
-        selector: 'textarea',
+        selector: elemento,
         plugins: 'advlist lists',
         height: "180",
         menubar: '',
