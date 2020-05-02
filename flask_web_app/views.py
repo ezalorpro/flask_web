@@ -21,8 +21,9 @@ from flask_web_app.forms import (
     PostForm,
     RegistrationForm,
     SearchForm,
+    CommentForm,
 )
-from flask_web_app.models import ImagePostModel, PostModel, User, genero, TagModel
+from flask_web_app.models import ImagePostModel, PostModel, User, genero, TagModel, CommentModel
 from flask_web_app.utils import login_required, add_tags
 
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
@@ -197,8 +198,21 @@ def list_posts():
 @app.route("/posts/<post_id>", endpoint="post_view")
 def post_view(post_id):
     post = PostModel.query.get(post_id)
-    return render_template("post_template.html", post=post)
+    form = CommentForm()
+    return render_template("post_template.html", post=post, form=form)
 
+@app.route('/comment_post/<post_id>', methods=['POST'], endpoint="comment_post")
+@login_required(role="regular_user")
+def comment_post(post_id):
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = CommentModel(user=current_user)
+        form.populate_obj(comment)
+        post = PostModel.query.get(post_id)
+        post.comments.append(comment)
+        db.session.commit()
+        return redirect(url_for('post_view', post_id=post_id))
+        
 
 @app.route("/delete_post/<id>", methods=["GET", "POST"], endpoint="delete_post")
 @login_required(role=["admin", "editor"])

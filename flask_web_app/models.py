@@ -84,17 +84,38 @@ class PostModel(db.Model):
         "User", backref=db.backref("postmodel", lazy="dynamic", passive_deletes=True)
     )
     tags = db.relationship("TagModel", secondary=blog_tag, back_populates="posts")
+    comments = db.relationship(
+        "CommentModel",
+        backref=db.backref("postmodel", order_by="desc(CommentModel.comment_date)"),
+    )
 
     def __repr__(self):
         return f"{self.user.username}: {self.title[:15]}"
+
 
 class TagModel(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String, unique=True, nullable=False)
     posts = db.relationship("PostModel", secondary=blog_tag, back_populates="tags")
-    
+
     def __repr__(self):
         return f"{self.name}"
+
+
+class CommentModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    comment_text = db.Column(db.Text, index=True)
+    comment_date = db.Column(
+        db.DateTime, index=True, nullable=False, default=datetime.datetime.now
+    )
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
+    user = db.relationship(
+        "User", backref=db.backref("commentmodel", lazy="dynamic", passive_deletes=True)
+    )
+    post_id = db.Column(db.Integer, db.ForeignKey("post_model.id", ondelete="CASCADE"))
+
+    def __repr__(self):
+        return f"{self.user.username} - {self.post_id}: {self.comment_text[:12]}"
 
 
 class ImagePostModel(db.Model):

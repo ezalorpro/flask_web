@@ -328,3 +328,15 @@ function tinymceFunc(image_url, csrf_token) {
 
     $('select').css('display', 'block').filter(".form-control").css('display', 'none');
 };
+
+function tinymceFuncComment() {
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'advlist lists',
+        height: "180",
+        menubar: '',
+        toolbar: 'undo redo | bold italic underline strikethrough | fontsizeselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist '
+    });
+
+    $('select').css('display', 'block').filter(".form-control").css('display', 'none');
+};

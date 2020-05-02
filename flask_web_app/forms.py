@@ -112,3 +112,6 @@ class SearchForm(FlaskForm):
         label="Buscar por:",
         choices=[("title", "Titulo"), ("author", "Autor"), ("tag", "Tags")],
     )
+    
+class CommentForm(FlaskForm):
+    comment_text = wtforms.TextAreaField(label="comentario")

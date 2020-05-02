@@ -200,11 +200,19 @@ class PostView(ModelView):
         ),
         tags=dict(
             label="Tags",
-            validators=[validators.DataRequired("Debe agregar al menos un tag")]
-        )
+            validators=[validators.DataRequired("Debe agregar al menos un tag")],
+        ),
     )
     column_list = ["user", "title", "post_date", "post_modified"]
-    column_details_list = ["user", "title", "post_text", "post_date", "post_modified", "tags"]
+    column_details_list = [
+        "user",
+        "title",
+        "post_text",
+        "post_date",
+        "post_modified",
+        "tags",
+        "comments",
+    ]
     form_columns = ["user", "title", "post_text", "tags"]
     form_widget_args = {
         "user": {"required": True, "disabled": True},
@@ -258,15 +266,29 @@ class ImagesView(ModelView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for("login.admin_login"))
 
+
 class TagsView(ModelView):
-    
+
     column_list = ["name", "posts"]
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role == "admin"
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for("login.admin_login"))
+
+
+class CommentsView(ModelView):
+    column_type_formatters = MY_DEFAULT_FORMATTERS
+    column_type_formatters_detail = MY_DEFAULT_FORMATTERS
+    form_columns = ["comment_text", "postmodel", "user"]
     
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role == "admin"
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for("login.admin_login"))
+
 
 @login_manager.user_loader
 def load_user(id):
