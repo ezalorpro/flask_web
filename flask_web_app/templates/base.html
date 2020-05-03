@@ -39,13 +39,11 @@
             <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             {% if current_user.is_anonymous %}
             <ul class="right hide-on-med-and-down">
-              <li><a href="{{ url_for('ploting') }}">Ploting</a></li>
               <li><a href="{{ url_for('registrar') }}">registrarse</a></li>
               <li><a href="{{ url_for('login') }}">login</a></li>
             </ul>
             {% else %}
             <ul class="right hide-on-med-and-down">
-              <li><a href="{{ url_for('ploting') }}">Ploting</a></li>
               <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">{{current_user.username}}</a></li>
             </ul>
             {% endif %}
@@ -55,12 +53,26 @@
 
       {% if current_user.is_anonymous %}
       <ul class="sidenav sidenav-fixed invesible-top col l1" id="mobile-demo">
+        {% block navbar %}
+        <li>
+          <a>
+            <form action="{{ url_for('search', query=True, query_type='home') }}" method="get" id="form_busqueda">
+              <div class="input-field noline">
+                <input placeholder="Buscar..." id="search" name="search" class="validate" type="text">
+                <i class="material-icons prefix">search</i>
+              </div>
+            </form>
+          </a>
+        </li>
+        <div class="divider"></div>
+        {% endblock navbar %}
         <li><a href="{{ url_for('ploting') }}">Ploting</a></li>
         <li><a href="{{ url_for('registrar') }}">registrarse</a></li>
         <li><a href="{{ url_for('login') }}">login</a></li>
       </ul>
       {% else %}
       <ul class="sidenav sidenav-fixed invesible-top" id="mobile-demo">
+        {{ self.navbar() }}
         <li><a href="{{ url_for('ploting') }}" style="color: #0a0d1a;">Ploting</a></li>
         {% if current_user.role in ['admin', 'editor'] %}
         <li><a href="{{ url_for('list_posts') }}">Mis post</a></li>

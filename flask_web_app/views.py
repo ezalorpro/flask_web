@@ -10,15 +10,28 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_url, login_user, logout_user
 from PIL import Image, ImageOps
 from sqlalchemy.event import listens_for
+from sqlalchemy import func
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
 from flask_web_app import admin, app, db, file_path, login_manager, op, photos
-from flask_web_app.forms import (CommentForm, EditProfileForm, LoginForm,
-                                 PlotingForm, PostForm, RegistrationForm,
-                                 SearchForm)
-from flask_web_app.models import (CommentModel, ImagePostModel, PostModel,
-                                  TagModel, User, genero)
+from flask_web_app.forms import (
+    CommentForm,
+    EditProfileForm,
+    LoginForm,
+    PlotingForm,
+    PostForm,
+    RegistrationForm,
+    SearchForm,
+)
+from flask_web_app.models import (
+    CommentModel,
+    ImagePostModel,
+    PostModel,
+    TagModel,
+    User,
+    genero,
+)
 from flask_web_app.utils import add_tags, login_required
 
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
@@ -357,21 +370,21 @@ def search(query_type=None, query=None):
         if tipo == "title":
             results = (
                 db.session.query(PostModel)
-                .filter(PostModel.title.contains(query))
+                .filter(func.lower(PostModel.title).contains(query.lower()))
                 .order_by(PostModel.post_date)
                 .all()[::-1]
             )
         elif tipo == "author":
             results = (
                 db.session.query(PostModel)
-                .filter(PostModel.user.has(User.username.contains(query)))
+                .filter(PostModel.user.has(func.lower(User.username).contains(query.lower())))
                 .order_by(PostModel.post_date)
                 .all()[::-1]
             )
         elif tipo == "tag":
             results = (
                 db.session.query(PostModel)
-                .filter(PostModel.tags.any(TagModel.name.contains(query.lower())))
+                .filter(PostModel.tags.any(func.lower(TagModel.name).contains(query.lower())))
                 .order_by(PostModel.post_date)
                 .all()[::-1]
             )
@@ -380,7 +393,15 @@ def search(query_type=None, query=None):
         if query_type == "tag":
             results = (
                 db.session.query(PostModel)
-                .filter(PostModel.tags.any(TagModel.name.contains(query.lower())))
+                .filter(PostModel.tags.any(func.lower(TagModel.name).contains(query.lower())))
+                .order_by(PostModel.post_date)
+                .all()[::-1]
+            )
+        if query_type == "home":
+            query = request.args["search"]
+            results = (
+                db.session.query(PostModel)
+                .filter(func.lower(PostModel.title).contains(query.lower()))
                 .order_by(PostModel.post_date)
                 .all()[::-1]
             )
@@ -388,6 +409,7 @@ def search(query_type=None, query=None):
         form.tipo.data = query_type
         return render_template("search.html", form=form, results=results)
     else:
+        print(form.busqueda)
         return render_template("search.html", form=form)
 
 

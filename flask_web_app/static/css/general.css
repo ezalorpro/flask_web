@@ -221,10 +221,24 @@ ul.sidebar li a {
   color: #1976d2;
 }
 
+.input-field .prefix.right {
+  right: 0;
+}
+
 .material-icons {
   vertical-align: -5px !important;
 }
 
 .dropdown-content.select-dropdown li:not(.disabled) span {
   color: #1976d2;
+}
+
+.noline input {
+  border-bottom: 1px solid #0090ea00 !important;
+  box-shadow: 0 1px 0 0 #0090ea00 !important;
+}
+
+.noline input:focus {
+  border-bottom: 1px solid #0090ea00 !important;
+  box-shadow: 0 1px 0 0 #0090ea00 !important;
 }
