@@ -37,8 +37,8 @@
 {% endif %}
 {%- endmacro %}
 
-{% macro modal(obj) -%}
-    <div id="modal{{obj.id}}" class="modal">
+{% macro modal_post(obj) -%}
+    <div id="modal_post_{{obj.id}}" class="modal">
       <div class="modal-content">
         <h4 class="center">Confirmacion de borrado</h4>
         <h5 class="center">¿Esta seguro que desea borrar este post?</h5>
@@ -55,4 +55,23 @@
         </form>
       </div>
     </div>
+{%- endmacro %}
+
+{% macro modal_comment(obj) -%}
+<div id="modal_comment_{{obj.id}}" class="modal">
+  <div class="modal-content">
+    <h4 class="center">Confirmacion de borrado</h4>
+    <h5 class="center">¿Esta seguro que desea borrar este comentario?</h5>
+    <p><strong>Comentario:</strong> {{obj.comment_text[:15]|safe}}</p>
+    <p><strong>Fecha de creacion:</strong> {{obj.comment_date.strftime('%d-%m-%Y  %I:%M:%S %p')}}</p>
+
+  </div>
+  <div class="modal-footer">
+    <form action="{{ url_for('delete_comment', comment_id=obj.id) }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="modal-close btn waves-effect waves-light red darken-1">Borrar</button>
+      <a href="#!" class="modal-close btn-flat">Cancelar</a>
+    </form>
+  </div>
+</div>
 {%- endmacro %}

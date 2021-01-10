@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from "jinja2_macros.html" import modal %}
+{% from "jinja2_macros.html" import modal_post %}
 
 {% block cssContent %}
 {% endblock cssContent %}
@@ -58,7 +58,7 @@
         <div class="truncate">
           {{ post.title }}
           <div>
-            <a href="#modal{{post.id}}" class="secondary-content red-text text-darken-1 modal-trigger"><i
+            <a href="#modal_post_{{post.id}}" class="secondary-content red-text text-darken-1 modal-trigger"><i
                 class="material-icons icon-separation2">delete</i></a><a
                 href="{{ url_for('edit_post', post_id=post.id) }}"
                 class="secondary-content light-blue-text text-accent-4"><i
@@ -69,25 +69,7 @@
           </div>
         </div>
       </li>
-      {{modal(post)}}
-      <!-- Modal Structure -->
-      {# <div id="modal{{post.id}}" class="modal">
-        <div class="modal-content">
-          <h4 class="center">Confirmacion de borrado</h4>
-          <h5 class="center">¿Esta seguro que desea borrar este post?</h5>
-          <p><strong>Titulo:</strong> {{post.title}}</p>
-          <p><strong>Fecha de creacion:</strong> {{post.post_date}}</p>
-          <p><strong>Ultima modificacion:</strong> {{post.post_modified}}</p>
-
-        </div>
-        <div class="modal-footer">
-          <form action="{{ url_for('delete_post', id=post.id) }}" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" class="modal-close btn waves-effect waves-light red darken-1">Borrar</button>
-            <a href="#!" class="modal-close btn-flat">Cancelar</a>
-          </form>
-        </div>
-      </div> #}
+      {{ modal_post(post) }}
       {% endfor %}
     </ul>
 

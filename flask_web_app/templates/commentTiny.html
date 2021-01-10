@@ -23,8 +23,9 @@ $(document).ready(function () {
         }
       });
       
-      {% for links in comments %}
-        $('#link_{{links.id}}').hide()
+      {% for element in comments %}
+        $('#link_{{element.id}}').hide()
+        $('#delete_{{element.id}}').hide()
       {% endfor %}
 
       $("#cancel_{{comment.id}}").on('click', function (en) {
@@ -40,8 +41,9 @@ $(document).ready(function () {
         $("#cancel_{{comment.id}}").remove();"submit_{{comment.id}}"
         $('{{ form.csrf_token }}').appendTo('#principal_form');
 
-        {% for links in comments %}
-          $('#link_{{links.id}}').show()
+        {% for element in comments %}
+          $('#link_{{element.id}}').show()
+          $('#delete_{{element.id}}').show()
         {% endfor %}
       });
     

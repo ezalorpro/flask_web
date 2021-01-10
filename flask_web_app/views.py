@@ -5,33 +5,21 @@ import re
 import wtforms
 from bokeh import plotting as plt
 from bokeh.embed import components
-from flask import jsonify, redirect, render_template, request, url_for
+from flask import jsonify, redirect, render_template, request, url_for, abort
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_url, login_user, logout_user
 from PIL import Image, ImageOps
-from sqlalchemy.event import listens_for
 from sqlalchemy import func
+from sqlalchemy.event import listens_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from wtforms import validators
 
 from flask_web_app import admin, app, db, file_path, login_manager, op, photos
-from flask_web_app.forms import (
-    CommentForm,
-    EditProfileForm,
-    LoginForm,
-    PlotingForm,
-    PostForm,
-    RegistrationForm,
-    SearchForm,
-)
-from flask_web_app.models import (
-    CommentModel,
-    ImagePostModel,
-    PostModel,
-    TagModel,
-    User,
-    genero,
-)
+from flask_web_app.forms import (CommentForm, EditProfileForm, LoginForm,
+                                 PlotingForm, PostForm, RegistrationForm,
+                                 SearchForm)
+from flask_web_app.models import (CommentModel, ImagePostModel, PostModel,
+                                  TagModel, User, genero)
 from flask_web_app.utils import add_tags, login_required
 
 EMAIL_REGX = r"[^@]+@[^@]+\.[^@]+"
@@ -231,11 +219,26 @@ def comment_post(post_id):
 @login_required(role="regular_user")
 def edit_comment(comment_id):
     comment = CommentModel.query.get(comment_id)
-    comment.comment_text = request.form["com_" + str(comment.id)]
-    db.session.commit()
-    return redirect(url_for("post_view", post_id=comment.post_id))
+    if current_user == comment.user:
+        comment.comment_text = request.form["com_" + str(comment.id)]
+        db.session.commit()
+        return redirect(url_for("post_view", post_id=comment.post_id))
+    else:
+        return abort("404")
+        
 
-
+@app.route('/delete_comment/<comment_id>', methods=['POST'], endpoint="delete_comment")
+@login_required(role="regular_user")
+def delete_comment(comment_id):
+    comment = CommentModel.query.get(comment_id)
+    if current_user == comment.user:
+        post_id = comment.post_id
+        db.session.delete(comment)
+        db.session.commit()
+        return redirect(url_for("post_view", post_id=post_id))
+    else:
+        return abort("404")
+    
 @app.route("/delete_post/<id>", methods=["GET", "POST"], endpoint="delete_post")
 @login_required(role=["admin", "editor"])
 def delete_post(id):

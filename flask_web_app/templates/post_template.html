@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "jinja2_macros.html" import modal %}
+{% from "jinja2_macros.html" import modal_post, modal_comment %}
 
 {% block cssContent %}
 {% endblock cssContent %}
@@ -48,17 +48,20 @@
             {{ comment.user.username }} <br>
             {{ comment.comment_date.strftime('%d/%m/%Y  %I:%M:%S %p') }}
             {% if current_user == comment.user %}
-            <br><a href="!#" id='link_{{comment.id}}'><i class="material-icons icon-separation">edit</i></a>
+            <br><a href="!#" id='link_{{comment.id}}'><i class="material-icons icon-separation">edit</i></a><a href="#modal_comment_{{comment.id}}"
+              id='delete_{{comment.id}}' class="red-text text-darken-1 modal-trigger"><i
+                class="material-icons icon-separation">delete</i></a>
             {% endif %}
           </div>
         </div>
       </li>
+      {{ modal_comment(comment) }}
       {% else %}
-      {% if current_user.is_authenticated %}
-      No hay comentarios, se el primero en comentar
-      {% else %}
-      No hay comentarios. Debes logiar para poder comentar
-      {% endif %}
+        {% if current_user.is_authenticated %}
+        No hay comentarios, se el primero en comentar
+        {% else %}
+        No hay comentarios. Debes logiar para poder comentar
+        {% endif %}
       {% endfor %}
     </ul>
 
@@ -74,7 +77,7 @@
 </div>
 </div>
 
-{{modal(post)}}
+{{ modal_post(post) }}
 
 {% endblock content %}
 
@@ -86,7 +89,7 @@
 <li><a href="{{ url_for('edit_post', post_id=post.id) }}">Editar<i
       class="material-icons right light-blue-text text-accent-4">edit</i></a>
 </li>
-<li><a href="#modal{{post.id}}" class="modal-trigger">Borrar<i
+<li><a href="#modal_post_{{post.id}}" class="modal-trigger">Borrar<i
       class="material-icons right red-text text-darken-1">delete</i></a>
 </li>
 {% endif %}
